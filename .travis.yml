@@ -1,0 +1,15 @@
+language: haxe
+
+haxe:
+ - 3.4.7
+
+install:
+ - yes | haxelib install hxcpp
+ - yes | haxelib install lime
+ - yes | haxelib install openfl
+ - yes | haxelib install actuate
+ - yes | haxelib install svg
+ - yes | haxelib git app https://github.com/PXshadow/App.git
+
+script:
+ - haxelib run lime build cpp
