@@ -1,4 +1,6 @@
-# OpenTL 
+# OpenTL
+[![Build Status](https://travis-ci.org/OpenTL-Project/OpenTL.svg?branch=master)](https://travis-ci.org/OpenTL-Project/OpenTL)
+<br />
 A user friendly, cross platform, module based, robust, completely scriptable/moddable, project oriented map editor.
 <br />
 
