@@ -9,7 +9,7 @@ install:
  - yes | haxelib install openfl
  - yes | haxelib install actuate
  - yes | haxelib install svg
- - yes | haxelib git app https://github.com/PXshadow/App.git
+ - yes | haxelib git app "https://github.com/PXshadow/App.git" master
 
 script:
  - haxelib run lime build cpp
