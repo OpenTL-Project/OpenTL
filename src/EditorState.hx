@@ -10,6 +10,7 @@ import openfl.display.DisplayObjectContainer;
 import openfl.display.FPS;
 import openfl.display.Shape;
 import openfl.display.Sprite;
+import openfl.display.Tile;
 import openfl.display.Tilemap;
 import openfl.display.Tileset;
 import openfl.events.KeyboardEvent;
@@ -23,7 +24,8 @@ import openfl.ui.Keyboard;
  */
 class EditorState extends State 
 {
-	public static var stageContainer:Button;
+	public static var stageContainer:DisplayObjectContainer;
+	var stagePressed:Int = 0;
 	public static var tilemap:EditorTilemap;
 	var palette:Sprite;
 	
@@ -51,8 +53,8 @@ class EditorState extends State
 	var rightPressed:Bool = false;
 	var mouseMiddleDown:Bool = false;
 	//old mouseX and mouseY
-	var oX:Float;
-	var oY:Float;
+	public static var oX:Float;
+	public static var oY:Float;
 	
 
 	public function new()
@@ -62,10 +64,8 @@ class EditorState extends State
 		//update static initally
 		Static.update(true);
 		
-		stageContainer = new Button();
-		stageContainer.Down = stageDown;
-		stageContainer.Up = stageUp;
-		stageContainer.Click = stageClick;
+		stageContainer = new DisplayObjectContainer();
+		
 		addChild(stageContainer);
 		tilemap = new EditorTilemap();
 		stageContainer.addChild(tilemap);
@@ -99,39 +99,73 @@ class EditorState extends State
 	override public function mouseUp() 
 	{
 		super.mouseUp();
+		HandleButton.direction = -1;
+		stageUp();
 		if (App.pointRect(mouseX, mouseY, layers.Rect())) layers.pressed();
 		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.pressed();
 		//if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.pressed();
 	}
-	//stage 
-	public function stageDown(e:MouseEvent)
+	public function getTileId(mX:Float, mY:Float):Tile
 	{
-		if (e.localX < tilemap.x || e.localX > tilemap.x + tilemap.width || e.localY < tilemap.y || e.localY > tilemap.y + tilemap.height)
+		return tilemap.getTileAt(Math.floor(mX / Static.editorTileSize) + Math.floor(mY / Static.editorTileSize) * Static.cX);
+	}
+	//stage 
+	public function stageDown()
+	{
+		if (stageContainer.mouseX < tilemap.x || stageContainer.mouseX > tilemap.x + tilemap.width || stageContainer.mouseY < tilemap.y || stageContainer.mouseY > tilemap.y + tilemap.height)
 		{
 		//handler pressed
-		for (i in 0...4) if (App.pointRect(e.localX, e.localY, handleArray[i].Rect()))
+		for (i in 0...4) if (App.pointRect(stageContainer.mouseX, stageContainer.mouseY, handleArray[i].Rect()))
 		{
 			trace("pressed");
+			HandleButton.direction = handleArray[i].dir;
 		}
 		}else{
-		//tile id
-		var id:Int = Math.floor(e.localX / Static.editorTileSize) + Math.floor(e.localY / Static.editorTileSize) * Static.cX;
-		tilemap.getTileAt(id).alpha = 0.2;
-		trace("id " + id);
+		stagePressed = 1;
+		}
+		trace("left down");
+	}
+	public function tileDown()
+	{
+		var tile = getTileId(stageContainer.mouseX, stageContainer.mouseY);
+		if (tile == null) return;
+		
+		switch(stagePressed)
+		{
+			case 0:
+			//nothing
+			case 1:
+			//left mouse
+			tile.alpha = 0.2;
+			case 2:
+			//right mouse
+			tile.alpha = 1;
 		}
 	}
-	public function stageUp(e:MouseEvent)
+	public function stageRightDown()
 	{
-		
+		trace("right down");
+		stagePressed = 2;
 	}
-	public function stageClick(e:MouseEvent)
+	public function stageUp()
 	{
-		
+		stagePressed = 0;
 	}
 	
 	override public function mouseDown() 
 	{
 		super.mouseDown();
+		if(App.pointRect(mouseX,mouseY,new Rectangle(stageContainer.x,stageContainer.y,stageContainer.width,stageContainer.height)))stageDown();
+	}
+	override public function mouseRightDown(e:MouseEvent) 
+	{
+		super.mouseRightDown(e);
+		if (App.pointRect(mouseX, mouseY, new Rectangle(stageContainer.x, stageContainer.y, stageContainer.width, stageContainer.height))) stageRightDown();
+	}
+	override public function mouseRightUp(e:MouseEvent) 
+	{
+		super.mouseRightUp(e);
+		stageUp();
 	}
 	override public function keyUp(e:KeyboardEvent) 
 	{
@@ -158,13 +192,14 @@ class EditorState extends State
 	override public function update() 
 	{
 		super.update();
+		//drag
+		if (stagePressed > 0) tileDown();
+		//update tile resizing of stage
+		if (HandleButton.direction >= 0) HandleButton.update();
 		//trace("keyUP " + cameraUp);
 		cameraMove();
 		//drag stage
-		if (mouseMiddleDown)
-		{
-			moveStage(mouseX - oX, mouseY - oY);
-		}
+		if (mouseMiddleDown)moveStage(mouseX - oX, mouseY - oY);
 		//set old
 		oX = mouseX; oY = mouseY;
 	}

@@ -1,5 +1,6 @@
 package;
 
+import core.App;
 import core.Button;
 import openfl.display.Shape;
 import openfl.events.MouseEvent;
@@ -11,6 +12,10 @@ import openfl.geom.Rectangle;
  */
 class HandleButton extends Shape
 {
+	//global
+	public static var direction:Int = -1;
+	//local
+	public var dir:Int = 0;
 	/**
 	 * 
 	 * @param	xpos
@@ -18,9 +23,11 @@ class HandleButton extends Shape
 	 * @param	size
 	 * @param	dir -1 = defualt, 0 = up, 1 = down, 2 = left, 3 = right
 	 */
-	public function new(?xpos:Float=0, ?ypos:Float=0, dir:Int=-1, lineThickness:Int=2, setWidth:Int=16) 
+	public function new(?xpos:Float=0, ?ypos:Float=0, _dir:Int=-1, lineThickness:Int=2, setWidth:Int=16) 
 	{
 		super();
+		dir = _dir;
+		direction = dir;
 		cacheAsBitmap = true;
 		//auto add to stageContainer
 		if (dir >= 0) 
@@ -64,9 +71,23 @@ class HandleButton extends Shape
 		graphics.drawRect(0, 0, width, height);
 	}
 	
-	public function pressed() 
+	public static function update()
 	{
-		
+		/*switch(direction)
+		{
+			case 0:
+			//up
+			var difY:Float = App.state.mouseY - EditorState.oY;
+			case 1:
+			//down
+			var difY:Float = App.state.mouseY - EditorState.oY;
+			case 2:
+			//left
+			var difX:Float = App.state.mouseX - EditorState.oX;
+			case 3:
+			//right	
+			var difX:Float = App.state.mouseX - EditorState.oX;
+		}*/
 	}
 	
 	public function Rect():Rectangle
