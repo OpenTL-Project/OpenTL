@@ -3,6 +3,8 @@ package;
 import core.App;
 import core.Button;
 import motion.Actuate;
+import openfl.display.DisplayObject;
+import openfl.display.DisplayObjectContainer;
 import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.events.MouseEvent;
@@ -13,7 +15,7 @@ import openfl.text.TextFormatAlign;
  * ...
  * @author 
  */
-class Tab extends Button
+class Tab extends DisplayObjectContainer
 {
 	@:isVar public var expand(get, set):Bool = true;
 	function get_expand():Bool
@@ -57,9 +59,6 @@ class Tab extends Button
 		
 		//set
 		expand = expanded;
-		
-		//enable function
-		Click = function(_){};
 	}
 	
 	//dropdown functions
@@ -99,10 +98,15 @@ class Tab extends Button
 		}
 	}
 	
-	override public function mouseClick(e:MouseEvent) 
+    public function Rect():Rectangle 
 	{
-		super.mouseClick(e);
-		if (App.pointRect(e.localX, e.localY, new Rectangle(dropdown.x,dropdown.y,dropdown.width,dropdown.height)))
+		return new Rectangle(x, y, width, height);
+	}
+	
+	//called from mouseup in editor state
+	public function mouseClick() 
+	{
+		if (App.pointRect(mouseX, mouseY, new Rectangle(dropdown.x,dropdown.y,dropdown.width,dropdown.height)))
 		{
 			updateExpand();
 			expand = !expand;

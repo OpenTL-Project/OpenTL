@@ -14,6 +14,7 @@ import openfl.display.Tilemap;
 import openfl.display.Tileset;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
+import openfl.geom.Rectangle;
 import openfl.ui.Keyboard;
 
 /**
@@ -31,6 +32,12 @@ class EditorState extends State
 	var fileButton:Button;
 	var projectButton:Button;
 	var exportButton:Button;
+	//resize tilemap (add extra tiles) r = resize, l = left, right = right , u = up , d = down
+	var stageRL:Button;
+	var stageRR:Button;
+	var stageRU:Button;
+	var stageRD:Button;
+	
 	//ui
 	var topBar:Shape;
 	var topText:Text;
@@ -84,7 +91,7 @@ class EditorState extends State
 		addChild(topText);
 		//TODO: file project and export invisButtons using App.createInvisButton()
 		
-		var layers = new Tab("LAYERS");
+		layers = new Tab("LAYERS");
 		layers.y = 100;
 		addChild(layers);
 		
@@ -94,6 +101,9 @@ class EditorState extends State
 	override public function mouseUp() 
 	{
 		super.mouseUp();
+		if (App.pointRect(mouseX, mouseY, layers.Rect())) layers.mouseClick();
+		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.mouseClick();
+		//if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.mouseClick();
 	}
 	override public function mouseDown() 
 	{
