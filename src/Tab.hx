@@ -50,9 +50,9 @@ class Tab extends DisplayObjectContainer
 		shape.graphics.lineStyle(2, 0x757788); shape.graphics.moveTo(16, 31 + 2); shape.graphics.lineTo(16 + 224, 31 + 2);
 		
 		addChild(shape);
-		addChild(App.createText(title, 32, 8 + 0, 14, 0xDFE0EA, TextFormatAlign.LEFT, 126 + 76 - 20));
+		addChild(App.createText(title, 32, 4, 14, 0xDFE0EA, TextFormatAlign.LEFT, 126 + 76 - 20));
 		dropdown = new Shape();
-		dropdown.x = 12; dropdown.y = 12 + 4;
+		dropdown.x = 12; dropdown.y = 12;
 		//turn upside down
 		if (!expanded) dropdown.rotation = 180;
 		addChild(dropdown);
