@@ -25,7 +25,6 @@ class EditorState extends State
 {
 	public static var stageContainer:Button;
 	public static var tilemap:EditorTilemap;
-	var mapData:Map<{x:Int,y:Int},EditorTile> = new Map<{x:Int,y:Int},EditorTile>();
 	var palette:Sprite;
 	
 	//buttons
@@ -64,7 +63,9 @@ class EditorState extends State
 		Static.update(true);
 		
 		stageContainer = new Button();
-		stageContainer.Click = stagePressed;
+		stageContainer.Down = stageDown;
+		stageContainer.Up = stageUp;
+		stageContainer.Click = stageClick;
 		addChild(stageContainer);
 		tilemap = new EditorTilemap();
 		stageContainer.addChild(tilemap);
@@ -103,7 +104,27 @@ class EditorState extends State
 		//if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.pressed();
 	}
 	//stage 
-	public function stagePressed(e:MouseEvent)
+	public function stageDown(e:MouseEvent)
+	{
+		if (e.localX < tilemap.x || e.localX > tilemap.x + tilemap.width || e.localY < tilemap.y || e.localY > tilemap.y + tilemap.height)
+		{
+		//handler pressed
+		for (i in 0...4) if (App.pointRect(e.localX, e.localY, handleArray[i].Rect()))
+		{
+			trace("pressed");
+		}
+		}else{
+		//tile id
+		var id:Int = Math.floor(e.localX / Static.editorTileSize) + Math.floor(e.localY / Static.editorTileSize) * Static.cX;
+		tilemap.getTileAt(id).alpha = 0.2;
+		trace("id " + id);
+		}
+	}
+	public function stageUp(e:MouseEvent)
+	{
+		
+	}
+	public function stageClick(e:MouseEvent)
 	{
 		
 	}
