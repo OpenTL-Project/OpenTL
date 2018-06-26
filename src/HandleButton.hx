@@ -1,12 +1,15 @@
 package;
 
 import core.Button;
+import openfl.display.Shape;
+import openfl.events.MouseEvent;
+import openfl.geom.Rectangle;
 
 /**
  * ...
  * @author 
  */
-class HandleButton extends Button 
+class HandleButton extends Shape
 {
 	/**
 	 * 
@@ -17,9 +20,16 @@ class HandleButton extends Button
 	 */
 	public function new(?xpos:Float=0, ?ypos:Float=0, dir:Int=-1, lineThickness:Int=2, setWidth:Int=16) 
 	{
-		super(xpos, ypos);
+		super();
+		cacheAsBitmap = true;
 		//auto add to stageContainer
-		if (dir >= 0) EditorState.stageContainer.addChild(this);
+		if (dir >= 0) 
+		{
+			EditorState.stageContainer.addChild(this);
+		}else{
+			x = xpos;
+			y = ypos;
+		}
 		//generate graphic
 		graphics.lineStyle(lineThickness,0xDFE0EA);
 		switch(dir)
@@ -47,6 +57,21 @@ class HandleButton extends Button
 			x = EditorState.tilemap.width + 9;
 			y = (EditorState.tilemap.height - height)/2;
 		}
+		
+		//background invis rect
+		graphics.endFill();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, width, height);
+	}
+	
+	public function pressed() 
+	{
+		
+	}
+	
+	public function Rect():Rectangle
+	{
+		return new Rectangle(x, y, width, height);
 	}
 	
 	public function graphic0(setWidth:Int,lineThickness:Int)

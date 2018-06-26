@@ -104,7 +104,7 @@ class Tab extends DisplayObjectContainer
 	}
 	
 	//called from mouseup in editor state
-	public function mouseClick() 
+	public function pressed() 
 	{
 		if (App.pointRect(mouseX, mouseY, new Rectangle(dropdown.x,dropdown.y,dropdown.width,dropdown.height)))
 		{

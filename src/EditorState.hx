@@ -23,7 +23,7 @@ import openfl.ui.Keyboard;
  */
 class EditorState extends State 
 {
-	public static var stageContainer:DisplayObjectContainer;
+	public static var stageContainer:Button;
 	public static var tilemap:EditorTilemap;
 	var mapData:Map<{x:Int,y:Int},EditorTile> = new Map<{x:Int,y:Int},EditorTile>();
 	var palette:Sprite;
@@ -63,7 +63,8 @@ class EditorState extends State
 		//update static initally
 		Static.update(true);
 		
-		stageContainer = new DisplayObjectContainer();
+		stageContainer = new Button();
+		stageContainer.Click = stagePressed;
 		addChild(stageContainer);
 		tilemap = new EditorTilemap();
 		stageContainer.addChild(tilemap);
@@ -97,10 +98,16 @@ class EditorState extends State
 	override public function mouseUp() 
 	{
 		super.mouseUp();
-		if (App.pointRect(mouseX, mouseY, layers.Rect())) layers.mouseClick();
-		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.mouseClick();
-		//if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.mouseClick();
+		if (App.pointRect(mouseX, mouseY, layers.Rect())) layers.pressed();
+		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.pressed();
+		//if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.pressed();
 	}
+	//stage 
+	public function stagePressed(e:MouseEvent)
+	{
+		
+	}
+	
 	override public function mouseDown() 
 	{
 		super.mouseDown();
