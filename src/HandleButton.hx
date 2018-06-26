@@ -10,12 +10,10 @@ import openfl.geom.Rectangle;
  * ...
  * @author 
  */
-class HandleButton extends Shape
+class HandleButton extends Button
 {
 	//global
 	public static var direction:Int = -1;
-	//local
-	public var dir:Int = 0;
 	/**
 	 * 
 	 * @param	xpos
@@ -23,12 +21,15 @@ class HandleButton extends Shape
 	 * @param	size
 	 * @param	dir -1 = defualt, 0 = up, 1 = down, 2 = left, 3 = right
 	 */
-	public function new(?xpos:Float=0, ?ypos:Float=0, _dir:Int=-1, lineThickness:Int=2, setWidth:Int=16) 
+	public function new(?xpos:Float=0, ?ypos:Float=0, dir:Int=-1, lineThickness:Int=2, setWidth:Int=16) 
 	{
 		super();
-		dir = _dir;
-		direction = dir;
 		cacheAsBitmap = true;
+		//function
+		Down = function(_)
+		{
+			direction = dir;
+		}
 		//auto add to stageContainer
 		if (dir >= 0) 
 		{
@@ -73,21 +74,30 @@ class HandleButton extends Shape
 	
 	public static function update()
 	{
-		/*switch(direction)
+		trace("update");
+		switch(direction)
 		{
 			case 0:
 			//up
 			var difY:Float = App.state.mouseY - EditorState.oY;
+			if (EditorState.tilemap.grid.height - difY < 0) return;
+			EditorState.tilemap.grid.y += difY;
+			EditorState.tilemap.grid.height += -difY;
 			case 1:
 			//down
 			var difY:Float = App.state.mouseY - EditorState.oY;
+			EditorState.tilemap.grid.height += difY;
 			case 2:
 			//left
 			var difX:Float = App.state.mouseX - EditorState.oX;
+			if (EditorState.tilemap.grid.width - difX < 0) return;
+			EditorState.tilemap.grid.x += difX;
+			EditorState.tilemap.grid.width += -difX;
 			case 3:
 			//right	
 			var difX:Float = App.state.mouseX - EditorState.oX;
-		}*/
+			EditorState.tilemap.grid.width += difX;
+		}
 	}
 	
 	public function Rect():Rectangle

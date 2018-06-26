@@ -38,23 +38,26 @@ class EditorTilemap extends Tilemap
 		grid = new Shape();
 		grid.cacheAsBitmap = true;
 		//grid line style
-		grid.graphics.lineStyle(1, 0xFFFFFF);
+		grid.graphics.lineStyle(2, 0xFFFFFF);
+		grid.graphics.moveTo(0, 0); grid.graphics.lineTo(0, height - 12);
+		grid.graphics.moveTo(0, 0); grid.graphics.lineTo(width - 12, 0);
 		//create tiles and grid
 		for (i in 0...Static.cX) for (j in 0...Static.cY)
 		{
-			var tile = new EditorTile(0, i, j,tileset);
+			var tile = new EditorTile(1, i, j,tileset);
 			addTile(tile);
 			createGrid(i, j);
 		}
+		EditorState.stageContainer.addChild(grid);
 	}
 	
 	public function createGrid(i:Int,j:Int)
 	{
 		//TODO: turn into Dashed line total 7 dashes per tile
 		//create grid (bottom left -> bottom right -> top right)
-		grid.graphics.moveTo((i + 0) * EditorTile.size, (j + 1) * EditorTile.size);
-		grid.graphics.lineTo((i + 1) * EditorTile.size, (j + 1) * EditorTile.size);
-		grid.graphics.lineTo((i + 1) * EditorTile.size, (j + 0) * EditorTile.size);
+		grid.graphics.moveTo((i + 0) * Static.editorTileSize, (j + 1) * Static.editorTileSize);
+		grid.graphics.lineTo((i + 1) * Static.editorTileSize, (j + 1) * Static.editorTileSize);
+		grid.graphics.lineTo((i + 1) * Static.editorTileSize, (j + 0) * Static.editorTileSize);
 	}
 	
 }

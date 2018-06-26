@@ -9,7 +9,6 @@ import openfl.display.Tileset;
  */
 class EditorTile extends openfl.display.Tile 
 {
-	public static var size:Float = 0;
 	public var ix:Int = 0;
 	public var iy:Int = 0;
 

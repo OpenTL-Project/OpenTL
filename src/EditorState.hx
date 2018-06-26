@@ -53,8 +53,8 @@ class EditorState extends State
 	var rightPressed:Bool = false;
 	var mouseMiddleDown:Bool = false;
 	//old mouseX and mouseY
-	public static var oX:Float;
-	public static var oY:Float;
+	public static var oX:Float = 0;
+	public static var oY:Float = 0;
 	
 
 	public function new()
@@ -107,23 +107,13 @@ class EditorState extends State
 	}
 	public function getTileId(mX:Float, mY:Float):Tile
 	{
+		if (mX < 0 || mX > tilemap.width - 20) return null;
 		return tilemap.getTileAt(Math.floor(mX / Static.editorTileSize) + Math.floor(mY / Static.editorTileSize) * Static.cX);
 	}
 	//stage 
 	public function stageDown()
 	{
-		if (stageContainer.mouseX < tilemap.x || stageContainer.mouseX > tilemap.x + tilemap.width || stageContainer.mouseY < tilemap.y || stageContainer.mouseY > tilemap.y + tilemap.height)
-		{
-		//handler pressed
-		for (i in 0...4) if (App.pointRect(stageContainer.mouseX, stageContainer.mouseY, handleArray[i].Rect()))
-		{
-			trace("pressed");
-			HandleButton.direction = handleArray[i].dir;
-		}
-		}else{
-		stagePressed = 1;
-		}
-		trace("left down");
+		if(HandleButton.direction == -1)stagePressed = 1;
 	}
 	public function tileDown()
 	{

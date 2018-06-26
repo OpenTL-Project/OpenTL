@@ -17,16 +17,21 @@ import openfl.text.TextFormatAlign;
  */
 class Tab extends DisplayObjectContainer
 {
-	@:isVar public var expand(get, set):Bool = true;
-	function get_expand():Bool
+	@:isVar public var expandBool(get, set):Bool = true;
+	function get_expandBool():Bool
 	{
-		return expand;
+		return expandBool;
 	}
-	function set_expand(set:Bool):Bool
+	function set_expandBool(set:Bool):Bool
 	{
-		expand = set;
-		updateExpand();
-		return expand;
+		expandBool = set;
+		if (expandBool)
+		{
+		expand();
+		}else{
+		collaspe();	
+		}
+		return expandBool;
 	}
 	public var shape:Shape;
 	//buttons
@@ -41,24 +46,14 @@ class Tab extends DisplayObjectContainer
 		super();
 		//main shape
 		shape = new Shape();
-		shape.graphics.lineStyle(2, 0x36373E);
-		shape.graphics.beginFill(0x5B5D6B);
-		shape.graphics.drawRoundRect(0, 0, 256, 640, 4 * 2, 4 * 2);
-		//embed line into shape
-		shape.graphics.endFill();
-		shape.graphics.lineStyle(2, 0x36373E); shape.graphics.moveTo(16, 31); shape.graphics.lineTo(16 + 224, 31);
-		shape.graphics.lineStyle(2, 0x757788); shape.graphics.moveTo(16, 31 + 2); shape.graphics.lineTo(16 + 224, 31 + 2);
-		
 		addChild(shape);
 		addChild(App.createText(title, 32, 4, 14, 0xDFE0EA, TextFormatAlign.LEFT, 126 + 76 - 20));
 		dropdown = new Shape();
 		dropdown.x = 12; dropdown.y = 12;
-		//turn upside down
-		if (!expanded) dropdown.rotation = 180;
 		addChild(dropdown);
 		
 		//set
-		expand = expanded;
+		expandBool = expanded;
 	}
 	
 	//dropdown functions
@@ -87,15 +82,30 @@ class Tab extends DisplayObjectContainer
 		dropdown.graphics.drawRect( -12, -12, 12 + 8 + 8 + 8, 12 + 8 + 8);
 	}
 	
-	public function updateExpand()
+	public function expand()
 	{
-		//TODO: expand and unexpand tab
-		if (expand)
-		{
 		dropdown0();
-		}else{
+		shape.graphics.clear();
+		shape.graphics.lineStyle(2, 0x36373E);
+		shape.graphics.beginFill(0x5B5D6B);
+		shape.graphics.drawRoundRect(0, 0, 256, 640, 4 * 2, 4 * 2);
+		shapeUnderLine();
+	}
+	public function collaspe()
+	{
 		dropdown1();
-		}
+		shape.graphics.clear();
+		shape.graphics.lineStyle(2, 0x36373E);
+		shape.graphics.beginFill(0x5B5D6B);
+		shape.graphics.drawRoundRect(0, 0, 256, 31, 4 * 2, 4 * 2);
+		//shapeUnderLine();
+	}
+	public function shapeUnderLine()
+	{
+		//embed line into shape
+		shape.graphics.endFill();
+		shape.graphics.lineStyle(2, 0x36373E); shape.graphics.moveTo(16, 31); shape.graphics.lineTo(16 + 224, 31);
+		shape.graphics.lineStyle(2, 0x757788); shape.graphics.moveTo(16, 31 + 2); shape.graphics.lineTo(16 + 224, 31 + 2);
 	}
 	
     public function Rect():Rectangle 
@@ -106,13 +116,7 @@ class Tab extends DisplayObjectContainer
 	//called from mouseup in editor state
 	public function pressed() 
 	{
-		if (App.pointRect(mouseX, mouseY, new Rectangle(dropdown.x,dropdown.y,dropdown.width,dropdown.height)))
-		{
-			updateExpand();
-			//toggle
-			expand = !expand;
-		}
-		
+		if (App.pointRect(mouseX, mouseY, new Rectangle(dropdown.x, dropdown.y, dropdown.width, dropdown.height))) expandBool = !expandBool;
 	}
 	
 }
