@@ -21,41 +21,43 @@ class HandleButton extends Button
 		//auto add to stageContainer
 		if (dir >= 0) EditorState.stageContainer.addChild(this);
 		//generate graphic
-		graphics.beginFill(0xDFE0EA);
+		graphics.lineStyle(lineThickness,0xDFE0EA);
 		switch(dir)
 		{
 			case -1:
 			graphic0(setWidth, lineThickness);
 			case 0:
 			//up
-			graphic1(setWidth, lineThickness);
-			x = EditorState.tilemap.width;
-			y = -9 -height;
+			graphic0(setWidth, lineThickness);
+			x = (EditorState.tilemap.width - width)/2;
+			y = -9 - height;
 			case 1:
 			//down
-			graphic1(setWidth, lineThickness);
-			
+			graphic0(setWidth, lineThickness);
+			x = (EditorState.tilemap.width - width) / 2;
+			y = EditorState.tilemap.height + 9;
 			case 2:
 			//left 
 			graphic1(setWidth, lineThickness);
-			
+			x = -9 - height;
+			y = (EditorState.tilemap.height - height)/2;
 			case 3:
 			//right
 			graphic1(setWidth, lineThickness);
-			
+			x = EditorState.tilemap.width + 9;
+			y = (EditorState.tilemap.height - height)/2;
 		}
-		trace("x " + x + " y " + y);
 	}
 	
 	public function graphic0(setWidth:Int,lineThickness:Int)
 	{
-		graphics.drawRect(0, 0, setWidth, lineThickness);
-		graphics.drawRect(0, lineThickness * 2, setWidth, lineThickness);
+		graphics.moveTo(0, 0); graphics.lineTo(setWidth, 0);
+		graphics.moveTo(0, lineThickness * 2); graphics.lineTo(setWidth, lineThickness * 2);
 	}
 	public function graphic1(setWidth:Int,lineThickness:Int)
 	{
-		graphics.drawRect(0, 0, lineThickness, setWidth);
-		graphics.drawRect(lineThickness * 2, 0, lineThickness, setWidth);
+		graphics.moveTo(0, 0); graphics.lineTo(0, setWidth);
+		graphics.moveTo(lineThickness * 2, 0); graphics.lineTo(lineThickness * 2, setWidth);
 	}
 	
 }
