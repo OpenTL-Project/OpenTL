@@ -6,6 +6,7 @@ import openfl.display.BitmapData;
 import openfl.display.Tilemap;
 import openfl.display.Tileset;
 import openfl.geom.Rectangle;
+import openfl.display.Shape;
 
 /**
  * ...
@@ -13,6 +14,7 @@ import openfl.geom.Rectangle;
  */
 class EditorTilemap extends Tilemap 
 {
+	public var grid:Shape;
 
 	public function new() 
 	{
@@ -33,9 +35,10 @@ class EditorTilemap extends Tilemap
 		var rectArray:Array<Rectangle> = [];
 		for (i in 0...amountX) for (j in 0...amountY) rectArray.push(new Rectangle(i * tileSize, j * tileSize, tileSize, tileSize));
 		tileset = new Tileset(bd, rectArray);
-		
+		grid = new Shape();
+		grid.cacheAsBitmap = true;
 		//grid line style
-		EditorState.grid.graphics.lineStyle(1, 0xFFFFFF);
+		grid.graphics.lineStyle(1, 0xFFFFFF);
 		//create tiles and grid
 		for (i in 0...Static.cX) for (j in 0...Static.cY)
 		{
@@ -49,9 +52,9 @@ class EditorTilemap extends Tilemap
 	{
 		//TODO: turn into Dashed line total 7 dashes per tile
 		//create grid (bottom left -> bottom right -> top right)
-		EditorState.grid.graphics.moveTo((i + 0) * EditorTile.size, (j + 1) * EditorTile.size);
-		EditorState.grid.graphics.lineTo((i + 1) * EditorTile.size, (j + 1) * EditorTile.size);
-		EditorState.grid.graphics.lineTo((i + 1) * EditorTile.size, (j + 0) * EditorTile.size);
+		grid.graphics.moveTo((i + 0) * EditorTile.size, (j + 1) * EditorTile.size);
+		grid.graphics.lineTo((i + 1) * EditorTile.size, (j + 1) * EditorTile.size);
+		grid.graphics.lineTo((i + 1) * EditorTile.size, (j + 0) * EditorTile.size);
 	}
 	
 }

@@ -23,8 +23,8 @@ import openfl.ui.Keyboard;
  */
 class EditorState extends State 
 {
-	var stageContainer:DisplayObjectContainer;
-	var tilemap:EditorTilemap;
+	public static var stageContainer:DisplayObjectContainer;
+	public static var tilemap:EditorTilemap;
 	var mapData:Map<{x:Int,y:Int},EditorTile> = new Map<{x:Int,y:Int},EditorTile>();
 	var palette:Sprite;
 	
@@ -32,11 +32,7 @@ class EditorState extends State
 	var fileButton:Button;
 	var projectButton:Button;
 	var exportButton:Button;
-	//resize tilemap (add extra tiles) r = resize, l = left, right = right , u = up , d = down
-	var stageRL:Button;
-	var stageRR:Button;
-	var stageRU:Button;
-	var stageRD:Button;
+	var handleArray:Array<HandleButton> = [];
 	
 	//ui
 	var topBar:Shape;
@@ -46,7 +42,6 @@ class EditorState extends State
 	var levels:Tab;
 	var tiles:Tab;
 	
-	public static var grid:Shape;
 	//controls
 	var cameraUp:Bool = false;
 	var cameraDown:Bool = false;
@@ -70,30 +65,31 @@ class EditorState extends State
 		
 		stageContainer = new DisplayObjectContainer();
 		addChild(stageContainer);
-		grid = new Shape();
-		grid.cacheAsBitmap = true;
 		tilemap = new EditorTilemap();
 		stageContainer.addChild(tilemap);
-		stageContainer.addChild(grid);
+		stageContainer.addChild(tilemap.grid);
+		//add handles
+		for (i in 0...4) handleArray.push(new HandleButton(0, 0, i));
 		
+		//palette
 		palette = new Palette(tilemap.tileset.bitmapData);
 		addChild(palette);
-		
-		addChild(new FPS(10, 10, 0xFFFFFF));
-		
 		//center intally
 		centerStage();
-		
 		//ui
 		topBar = App.createRect(0, 0, App.setWidth, 32, 0x5B5D6B);
 		addChild(topBar);
 		topText = App.createText("FILE        PROJECT        EXPORT", 0, 8 - 4, 14, 0xDFE0EA);
 		addChild(topText);
 		//TODO: file project and export invisButtons using App.createInvisButton()
-		
 		layers = new Tab("LAYERS");
 		layers.y = 100;
 		addChild(layers);
+		#if debug
+		var fps = new FPS(10, 10, 0xFFFFFF);
+		fps.scaleX = 2; fps.scaleY = 2;
+		addChild(fps);
+		#end
 		
 	}
 	
@@ -161,17 +157,13 @@ class EditorState extends State
 	
 	public function moveStage(x:Float, y:Float)
 	{
-		tilemap.x += x;
-		tilemap.y += y;
-		grid.x += x;
-		grid.y += y;
+		stageContainer.x += x;
+		stageContainer.y += y;
 	}
 	public function setStage(x:Float, y:Float)
 	{
-		tilemap.x = x;
-		tilemap.y = y;
-		grid.x = x;
-		grid.y = y;
+		stageContainer.x = x;
+		stageContainer.y = y;
 	}
 	
 	override public function mouseWheel(e:openfl.events.MouseEvent) 

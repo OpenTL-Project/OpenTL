@@ -109,10 +109,9 @@ class Tab extends DisplayObjectContainer
 		if (App.pointRect(mouseX, mouseY, new Rectangle(dropdown.x,dropdown.y,dropdown.width,dropdown.height)))
 		{
 			updateExpand();
+			//toggle
 			expand = !expand;
-			trace("pressed");
 		}
-		//trace("mouseX " + e.localX + " mouseY " + e.localY);
 		
 	}
 	
