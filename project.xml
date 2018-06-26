@@ -18,7 +18,6 @@
 	<haxelib name="actuate" />
 	<haxelib name="svg"/>
 	<haxelib name="app"/>
-	<!--<include path="D:/ThinQbatorProject/App/include.xml"/>-->
 	
 	<!-- assets -->
 	<icon path="assets/openfl.svg" />
