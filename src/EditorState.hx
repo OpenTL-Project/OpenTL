@@ -99,7 +99,7 @@ class EditorState extends State
 	override public function mouseUp() 
 	{
 		super.mouseUp();
-		HandleButton.direction = -1;
+		HandleButton.main = null;
 		stageUp();
 		if (App.pointRect(mouseX, mouseY, layers.Rect())) layers.pressed();
 		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.pressed();
@@ -113,7 +113,7 @@ class EditorState extends State
 	//stage 
 	public function stageDown()
 	{
-		if(HandleButton.direction == -1)stagePressed = 1;
+		if(HandleButton.main == null)stagePressed = 1;
 	}
 	public function tileDown()
 	{
@@ -185,7 +185,7 @@ class EditorState extends State
 		//drag
 		if (stagePressed > 0) tileDown();
 		//update tile resizing of stage
-		if (HandleButton.direction >= 0) HandleButton.update();
+		if (HandleButton.main !=  null) HandleButton.update();
 		//trace("keyUP " + cameraUp);
 		cameraMove();
 		//drag stage

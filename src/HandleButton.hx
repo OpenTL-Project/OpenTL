@@ -12,8 +12,10 @@ import openfl.geom.Rectangle;
  */
 class HandleButton extends Button
 {
+	
 	//global
-	public static var direction:Int = -1;
+	public static var main:HandleButton;
+	public var direction:Int = 0;
 	/**
 	 * 
 	 * @param	xpos
@@ -24,11 +26,12 @@ class HandleButton extends Button
 	public function new(?xpos:Float=0, ?ypos:Float=0, dir:Int=-1, lineThickness:Int=2, setWidth:Int=16) 
 	{
 		super();
+		direction = dir;
 		cacheAsBitmap = true;
 		//function
 		Down = function(_)
 		{
-			direction = dir;
+			main = this;
 		}
 		//auto add to stageContainer
 		if (dir >= 0) 
@@ -40,7 +43,7 @@ class HandleButton extends Button
 		}
 		//generate graphic
 		graphics.lineStyle(lineThickness,0xDFE0EA);
-		switch(dir)
+		switch(direction)
 		{
 			case -1:
 			graphic0(setWidth, lineThickness);
@@ -75,28 +78,31 @@ class HandleButton extends Button
 	public static function update()
 	{
 		trace("update");
-		switch(direction)
+		var difY:Float = App.state.mouseY - EditorState.oY;
+		var difX:Float = App.state.mouseX - EditorState.oX;
+		
+		switch(main.direction)
 		{
 			case 0:
 			//up
-			var difY:Float = App.state.mouseY - EditorState.oY;
 			if (EditorState.tilemap.grid.height - difY < 0) return;
 			EditorState.tilemap.grid.y += difY;
 			EditorState.tilemap.grid.height += -difY;
+			main.y += difY;
 			case 1:
 			//down
-			var difY:Float = App.state.mouseY - EditorState.oY;
 			EditorState.tilemap.grid.height += difY;
+			main.y += difY;
 			case 2:
 			//left
-			var difX:Float = App.state.mouseX - EditorState.oX;
 			if (EditorState.tilemap.grid.width - difX < 0) return;
 			EditorState.tilemap.grid.x += difX;
 			EditorState.tilemap.grid.width += -difX;
+			main.x += difX;
 			case 3:
 			//right	
-			var difX:Float = App.state.mouseX - EditorState.oX;
 			EditorState.tilemap.grid.width += difX;
+			main.x += difX;
 		}
 	}
 	
