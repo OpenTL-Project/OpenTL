@@ -6,6 +6,8 @@ A user friendly, cross platform, module based, robust, completely scriptable/mod
 
 group collaboration project spawning from the haxeflixel discord!
 
+Want to contribute click [here](https://github.com/OpenTL-Project/OpenTL/blob/master/BUILD.MD)!
+
 ## Design MVP Mockup by 01010111
 <p align="center"><img src="mvp.png"/></p>
 
