@@ -15,6 +15,7 @@ class HandleButton extends Button
 	
 	//global
 	public static var main:HandleButton;
+	public static var difMove:Float = 0;
 	public var direction:Int = 0;
 	/**
 	 * 
@@ -31,6 +32,7 @@ class HandleButton extends Button
 		//function
 		Down = function(_)
 		{
+			difMove = 0;
 			main = this;
 		}
 		//auto add to stageContainer
@@ -78,32 +80,37 @@ class HandleButton extends Button
 	public static function update()
 	{
 		trace("update");
-		var difY:Float = App.state.mouseY - EditorState.oY;
-		var difX:Float = App.state.mouseX - EditorState.oX;
-		
+		//switch by direction
 		switch(main.direction)
 		{
-			case 0:
-			//up
-			if (EditorState.tilemap.grid.height - difY < 0) return;
-			EditorState.tilemap.grid.y += difY;
-			EditorState.tilemap.grid.height += -difY;
-			main.y += difY;
-			case 1:
-			//down
-			EditorState.tilemap.grid.height += difY;
-			main.y += difY;
-			case 2:
-			//left
-			if (EditorState.tilemap.grid.width - difX < 0) return;
-			EditorState.tilemap.grid.x += difX;
-			EditorState.tilemap.grid.width += -difX;
-			main.x += difX;
-			case 3:
-			//right	
-			EditorState.tilemap.grid.width += difX;
-			main.x += difX;
+			case 0 | 1:
+			var dif:Float = App.state.mouseY - EditorState.oY;
+			main.y += dif;
+			difMove += dif;
+			EditorState.tilemap.grid.y = Math.floor((EditorState.tilemap.y + difMove) / Static.editorTileSize) * Static.editorTileSize;
+			case 2 | 3:
+			var dif:Float = App.state.mouseX - EditorState.oX;
+			main.x += dif;
+			difMove += dif;
+			EditorState.tilemap.grid.x = Math.floor((EditorState.tilemap.x + difMove)/Static.editorTileSize) * Static.editorTileSize;
 		}
+	}
+	//check to see if resize happened
+	public static function resize()
+	{
+		if (main == null) return;
+		
+		//set back handler
+		switch(main.direction)
+		{
+			case 0 | 1:
+			main.y += -difMove;
+			case 2 | 3:
+			main.x += -difMove;
+		}
+		//grid reset
+		EditorState.tilemap.grid.x = EditorState.tilemap.x;
+		EditorState.tilemap.grid.y = EditorState.tilemap.y;
 	}
 	
 	public function Rect():Rectangle

@@ -33,7 +33,6 @@ class EditorState extends State
 	var fileButton:Button;
 	var projectButton:Button;
 	var exportButton:Button;
-	var handleArray:Array<HandleButton> = [];
 	
 	//ui
 	var topBar:Shape;
@@ -70,8 +69,6 @@ class EditorState extends State
 		tilemap = new EditorTilemap();
 		stageContainer.addChild(tilemap);
 		stageContainer.addChild(tilemap.grid);
-		//add handles
-		for (i in 0...4) handleArray.push(new HandleButton(0, 0, i));
 		
 		//palette
 		palette = new Palette(tilemap.tileset.bitmapData);
@@ -99,7 +96,6 @@ class EditorState extends State
 	override public function mouseUp() 
 	{
 		super.mouseUp();
-		HandleButton.main = null;
 		stageUp();
 		if (App.pointRect(mouseX, mouseY, layers.Rect())) layers.pressed();
 		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.pressed();
@@ -140,6 +136,8 @@ class EditorState extends State
 	public function stageUp()
 	{
 		stagePressed = 0;
+		HandleButton.resize();
+		HandleButton.main = null;
 	}
 	
 	override public function mouseDown() 

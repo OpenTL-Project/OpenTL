@@ -1,6 +1,7 @@
 package;
 
 import core.App;
+import haxe.Timer;
 import openfl.Assets;
 import openfl.display.BitmapData;
 import openfl.display.Tilemap;
@@ -15,6 +16,7 @@ import openfl.display.Shape;
 class EditorTilemap extends Tilemap 
 {
 	public var grid:Shape;
+	public var handleArray:Array<HandleButton> = [];
 
 	public function new() 
 	{
@@ -25,8 +27,6 @@ class EditorTilemap extends Tilemap
 		//to do: write code to load tileset from a folder, currently hard coded renaine demo tileset (Thank you Squidly!)
 		bd = Assets.getBitmapData("assets/img/renaine_tiles.png");
 		
-		
-		//to do set tile size from user input or hscript.
 		var tileSize:Int = 16;
 		var amountX:Int = Math.floor(bd.width / tileSize);
 		var amountY:Int = Math.floor(bd.height / tileSize);
@@ -37,8 +37,28 @@ class EditorTilemap extends Tilemap
 		tileset = new Tileset(bd, rectArray);
 		grid = new Shape();
 		grid.cacheAsBitmap = true;
+		EditorState.stageContainer.addChild(grid);
+		generate();
+		//add handles after 10 frames
+		var tim = new Timer(16 * 10);
+		tim.run = function()
+		{
+		for (i in 0...4) handleArray.push(new HandleButton(0, 0, i));
+		tim.stop();
+		tim = null;
+		}
+	}
+	
+	public function generate()
+	{
+		grid.graphics.clear();
+		grid.width = 0;
+		grid.height = 0;
+		//remove previous tiles
+		if(numTiles > 0)removeTiles(0, numTiles);
 		//grid line style
 		grid.graphics.lineStyle(2, 0xFFFFFF);
+		//left and top line
 		grid.graphics.moveTo(0, 0); grid.graphics.lineTo(0, height - 12);
 		grid.graphics.moveTo(0, 0); grid.graphics.lineTo(width - 12, 0);
 		//create tiles and grid
@@ -48,7 +68,7 @@ class EditorTilemap extends Tilemap
 			addTile(tile);
 			createGrid(i, j);
 		}
-		EditorState.stageContainer.addChild(grid);
+		
 	}
 	
 	public function createGrid(i:Int,j:Int)
