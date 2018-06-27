@@ -61,7 +61,7 @@ class EditorState extends State
 		background = new Bitmap(new BitmapData(1, 1, false, 0x757788));
 		super();
 		//update static initally
-		Static.update(true);
+		Static.setEditorTileSize(true);
 		
 		stageContainer = new DisplayObjectContainer();
 		
@@ -130,14 +130,12 @@ class EditorState extends State
 	}
 	public function stageRightDown()
 	{
-		trace("right down");
 		stagePressed = 2;
 	}
 	public function stageUp()
 	{
 		stagePressed = 0;
 		HandleButton.resize();
-		HandleButton.main = null;
 	}
 	
 	override public function mouseDown() 
@@ -192,7 +190,7 @@ class EditorState extends State
 		oX = mouseX; oY = mouseY;
 	}
 	
-	public function centerStage()
+	public static function centerStage()
 	{
 		stageContainer.x = (App.setWidth - stageContainer.width) / 2;
 		stageContainer.y = (App.setHeight - stageContainer.height) / 2;
@@ -226,7 +224,6 @@ class EditorState extends State
 		stageContainer.scaleX += scale;
 		stageContainer.scaleY += scale;
 		}
-		trace("scale " + stageContainer.scaleX);
 	}
 	override public function mouseWheelDown(e:MouseEvent) 
 	{

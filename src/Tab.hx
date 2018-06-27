@@ -41,7 +41,7 @@ class Tab extends DisplayObjectContainer
 	
 	
 
-	public function new(title:String,expanded:Bool=true,scrollable:Bool=true,toggleView:Bool=false) 
+	public function new(title:String,expanded:Bool=true,scrollable:Bool=true,toggleView:Bool=false,addButtonBool:Bool=true) 
 	{
 		super();
 		//main shape
@@ -51,6 +51,9 @@ class Tab extends DisplayObjectContainer
 		dropdown = new Shape();
 		dropdown.x = 12; dropdown.y = 12;
 		addChild(dropdown);
+		
+		add = App.createSprite(232 - 4, 8 - 6, "assets/icons/add.svg");
+		addChild(add);
 		
 		//set
 		expandBool = expanded;

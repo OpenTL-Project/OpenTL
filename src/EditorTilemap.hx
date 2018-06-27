@@ -21,7 +21,9 @@ class EditorTilemap extends Tilemap
 	public function new() 
 	{
 		//intial size
-		super(512,512,null,true);
+		super(1, 1, null, true);
+		//bacgkround
+		//opaqueBackground = 0x0;
 		
 		var bd:BitmapData = new BitmapData(50, 50, false, 0x000000);
 		//to do: write code to load tileset from a folder, currently hard coded renaine demo tileset (Thank you Squidly!)
@@ -51,22 +53,39 @@ class EditorTilemap extends Tilemap
 	
 	public function generate()
 	{
+		//set size
+		width = Static.editorTileSize * Static.cX;
+		height = Static.editorTileSize * Static.cY;
+		
 		grid.graphics.clear();
 		grid.width = 0;
 		grid.height = 0;
+		grid.x = 0;
+		grid.y = 0;
 		//remove previous tiles
-		if(numTiles > 0)removeTiles(0, numTiles);
+		if (numTiles > 0) removeTiles(0, numTiles);
 		//grid line style
 		grid.graphics.lineStyle(2, 0xFFFFFF);
 		//left and top line
-		grid.graphics.moveTo(0, 0); grid.graphics.lineTo(0, height - 12);
-		grid.graphics.moveTo(0, 0); grid.graphics.lineTo(width - 12, 0);
+		grid.graphics.moveTo(0, 0); grid.graphics.lineTo(0, height);
+		grid.graphics.moveTo(0, 0); grid.graphics.lineTo(width, 0);
 		//create tiles and grid
-		for (i in 0...Static.cX) for (j in 0...Static.cY)
+		//x
+		var i:Int = 0;
+		//y
+		var j:Int = 0;
+		while (j < Static.cY)
 		{
 			var tile = new EditorTile(1, i, j,tileset);
 			addTile(tile);
 			createGrid(i, j);
+			
+			i ++;
+			if (i >= Static.cX)
+			{
+				i = 0;
+				j += 1;
+			}
 		}
 		
 	}

@@ -35,7 +35,7 @@ class Static
 	}
 	private static function set_tilemapWidth(set:Int):Int
 	{
-		update();
+		//setEditorTileSize();
 		return tilemapWidth = set;
 	}
 	
@@ -45,7 +45,7 @@ class Static
 	}
 	private static function set_tilemapHeight(set:Int)
 	{
-		update();
+		//setEditorTileSize();
 		return tilemapHeight = set;
 	}
 	
@@ -55,7 +55,6 @@ class Static
 	}
 	private static function set_cX(set:Int):Int
 	{
-		update();
 		return cX = set;
 	}
 	
@@ -65,16 +64,15 @@ class Static
 	}
 	private static function set_cY(set:Int):Int
 	{
-		update();
 		return cY = set;
 	}
 	
 	
-	public static function update(inital:Bool=false)
+	public static function setEditorTileSize(inital:Bool=false)
 	{
-		//TODO: when properties change update tilemap
+		//when properties change tilemap updates
 		editorTileSize = Math.min(tilemapWidth, tilemapHeight) / Math.min(cX, cY);
-		trace("next " + editorTileSize);
+		if(inital == false)EditorState.tilemap.generate();
 	}
 	
 	/*

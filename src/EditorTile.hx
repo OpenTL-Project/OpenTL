@@ -28,8 +28,8 @@ class EditorTile extends openfl.display.Tile
 	
 	public function toGrid()
 	{
-		x = iy * (Static.editorTileSize + 0);
-		y = ix * (Static.editorTileSize + 0);
+		x = ix * (Static.editorTileSize + 0);
+		y = iy * (Static.editorTileSize + 0);
 	}
 	
 	public function toScale()

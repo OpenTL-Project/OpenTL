@@ -77,9 +77,33 @@ class HandleButton extends Button
 		graphics.drawRect(0, 0, width, height);
 	}
 	
+	public function refreshPos()
+	{
+		switch(direction)
+		{
+			case -1:
+			//N/A
+			case 0:
+			//up
+			x = (EditorState.tilemap.width - width)/2;
+			y = -9 - height;
+			case 1:
+			//down 
+			x = (EditorState.tilemap.width - width) / 2;
+			y = EditorState.tilemap.height + 9;
+			case 2:
+			//left 
+			x = -9 - height;
+			y = (EditorState.tilemap.height - height)/2;
+			case 3:
+			//right
+			x = EditorState.tilemap.width + 9;
+			y = (EditorState.tilemap.height - height)/2;
+		}
+	}
+	
 	public static function update()
 	{
-		trace("update");
 		//switch by direction
 		switch(main.direction)
 		{
@@ -99,18 +123,44 @@ class HandleButton extends Button
 	public static function resize()
 	{
 		if (main == null) return;
-		
-		//set back handler
-		switch(main.direction)
+		//change
+		var change:Int = Math.floor(difMove / Static.editorTileSize);
+		trace("change " + change);
+		if (Math.abs(change) > 0)
 		{
-			case 0 | 1:
-			main.y += -difMove;
-			case 2 | 3:
-			main.x += -difMove;
-		}
+			if (main.direction == 0 || main.direction == 2) 
+			{
+				change *= -1;
+			}
+			
+			//tile width/height change
+			switch(main.direction)
+			{
+				case 0 | 1:
+				//y
+				Static.cY += change;
+				trace("changeY " + change);
+				case 2 | 3:
+				Static.cX += change;
+				trace("changeX " + change);
+				
+			}
+			EditorState.tilemap.generate();
+			
+		//refresh all handlers
+		for (handler in EditorState.tilemap.handleArray) handler.refreshPos();
+		
+		}else{	
+		//refresh main handler
+		main.refreshPos();
 		//grid reset
 		EditorState.tilemap.grid.x = EditorState.tilemap.x;
 		EditorState.tilemap.grid.y = EditorState.tilemap.y;
+		
+		}
+		EditorState.centerStage();
+		
+		main = null;
 	}
 	
 	public function Rect():Rectangle
