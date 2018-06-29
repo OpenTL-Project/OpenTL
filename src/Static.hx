@@ -11,7 +11,7 @@ class Static
 	@:isVar public static var tileSize(get, set):Int = 16;
 	//dynamically adjusted to scale to tilemap
 	public static var editorTileSize:Float = 64;
-	public static var tilesTileSize:Float = 32;
+	public static var tilesTileSize:Float = 92;
 	//tilemap x and y count of tiles
 	@:isVar public static var cX(get,set):Int = 8;
 	@:isVar public static var cY(get,set):Int = 8;

@@ -106,7 +106,7 @@ class EditorState extends State
 	public function getTileId(mX:Float, mY:Float):Tile
 	{
 		if (mX < 0 || mX > tilemap.width - 20) return null;
-		return tilemap.getTileAt(Math.floor(mX / tilemap.localTileSize) + Math.floor(mY / tilemap.localTileSize) * Static.cX);
+		return tilemap.getTileAt(Math.floor(mX / tilemap.tileSize) + Math.floor(mY / tilemap.tileSize) * Static.cX);
 	}
 	//stage 
 	public function stageDown()

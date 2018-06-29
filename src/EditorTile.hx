@@ -11,9 +11,11 @@ class EditorTile extends openfl.display.Tile
 {
 	public var ix:Int = 0;
 	public var iy:Int = 0;
+	public var tileSize:Float = 0;
 
-	public function new(id:Int=0, x:Int=0, y:Int=0,setTileset:Tileset) 
+	public function new(id:Int=0, x:Int=0, y:Int=0,setTileset:Tileset,localSize:Float) 
 	{
+		tileSize = localSize;
 		ix = x;
 		iy = y;
 		super(id, 0, 0, 1, 1);
@@ -28,14 +30,14 @@ class EditorTile extends openfl.display.Tile
 	
 	public function toGrid()
 	{
-		x = ix * (Static.editorTileSize + 0);
-		y = iy * (Static.editorTileSize + 0);
+		x = ix * (tileSize + 0);
+		y = iy * (tileSize + 0);
 	}
 	
 	public function toScale()
 	{
-		scaleX = 1 / rect.width * Static.editorTileSize;
-		scaleY = 1 / rect.height * Static.editorTileSize;
+		scaleX = 1 / rect.width * tileSize;
+		scaleY = 1 / rect.height * tileSize;
 	}
 	
 	

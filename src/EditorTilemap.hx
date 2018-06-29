@@ -19,7 +19,7 @@ class EditorTilemap extends Tilemap
 	public var grid:Shape;
 	public var handleArray:Array<HandleButton> = [];
 	public var mainBool:Bool = false;
-	public var localTileSize:Float = 0;
+	public var tileSize:Float = 0;
 
 	public function new(setMainBool:Bool=true) 
 	{
@@ -28,11 +28,11 @@ class EditorTilemap extends Tilemap
 		mainBool = setMainBool;
 		if (mainBool)
 		{
-		localTileSize = Static.editorTileSize;	
+		tileSize = Static.editorTileSize;	
 		}else{
-		localTileSize = Static.tilesTileSize;
+		tileSize = Static.tilesTileSize;
 		}
-		trace("local " + localTileSize);
+		trace("local " + tileSize);
 		//bacgkround
 		//opaqueBackground = 0x0;
 		
@@ -50,7 +50,6 @@ class EditorTilemap extends Tilemap
 		tileset = new Tileset(bd, rectArray);
 		grid = new Shape();
 		grid.cacheAsBitmap = true;
-		EditorState.stageContainer.addChild(grid);
 		generate();
 		//add handles after 10 frames
 		if (mainBool)
@@ -68,8 +67,8 @@ class EditorTilemap extends Tilemap
 	public function generate()
 	{
 		//set size
-		width = localTileSize * Static.cX;
-		height = localTileSize * Static.cY;
+		width = tileSize * Static.cX;
+		height = tileSize * Static.cY;
 		
 		grid.graphics.clear();
 		grid.width = 0;
@@ -90,7 +89,7 @@ class EditorTilemap extends Tilemap
 		var j:Int = 0;
 		while (j < Static.cY)
 		{
-			var tile = new EditorTile(1, i, j,tileset);
+			var tile = new EditorTile(1, i, j,tileset,tileSize);
 			addTile(tile);
 			createGrid(tile);
 			
@@ -104,13 +103,13 @@ class EditorTilemap extends Tilemap
 		
 	}
 	
-	public function createGrid(tile:Tile)
+	public function createGrid(tile:EditorTile)
 	{
 		//TODO: turn into Dashed line total 7 dashes per tile
 		//create grid (bottom left -> bottom right -> top right)
-		grid.graphics.moveTo(tile.x, tile.y + tile.rect.height * tile.scaleY);
-		grid.graphics.lineTo(tile.x + tile.rect.width * tile.scaleX, tile.y + tile.rect.height * tile.scaleY);
-		grid.graphics.lineTo(tile.x + tile.rect.width * tile.scaleY, tile.y);
+		grid.graphics.moveTo(tile.x, tile.tileSize + tile.y);
+		grid.graphics.lineTo(tile.x + tile.tileSize, tile.y + tile.tileSize);
+		grid.graphics.lineTo(tile.x + tile.tileSize, tile.y);
 	}
 	
 }

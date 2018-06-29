@@ -111,12 +111,12 @@ class HandleButton extends Button
 			var dif:Float = App.state.mouseY - EditorState.oY;
 			main.y += dif;
 			difMove += dif;
-			EditorState.tilemap.grid.y = Math.floor((EditorState.tilemap.y + difMove) / Static.editorTileSize) * Static.editorTileSize;
+			EditorState.tilemap.grid.y = Math.floor((EditorState.tilemap.y + difMove) / EditorState.tilemap.tileSize) * EditorState.tilemap.tileSize;
 			case 2 | 3:
 			var dif:Float = App.state.mouseX - EditorState.oX;
 			main.x += dif;
 			difMove += dif;
-			EditorState.tilemap.grid.x = Math.floor((EditorState.tilemap.x + difMove)/Static.editorTileSize) * Static.editorTileSize;
+			EditorState.tilemap.grid.x = Math.floor((EditorState.tilemap.x + difMove)/EditorState.tilemap.tileSize) * EditorState.tilemap.tileSize;
 		}
 	}
 	//check to see if resize happened
@@ -124,7 +124,7 @@ class HandleButton extends Button
 	{
 		if (main == null) return;
 		//change
-		var change:Int = Math.floor(difMove / Static.editorTileSize);
+		var change:Int = Math.floor(difMove / EditorState.tilemap.tileSize);
 		trace("change " + change);
 		if (Math.abs(change) > 0)
 		{
