@@ -90,6 +90,11 @@ class EditorState extends State
 		tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
 		tiles.container.mask.x = tiles.container.x;
 		tiles.container.mask.y = tiles.container.y;
+		tiles.containerPressed = function()
+		{
+			//TODO: get tile id from mouse press
+			tilesTilemap.getTileAt(2).alpha = 0.2;
+		}
 		addChild(tiles);
 		#if debug
 		var fps = new FPS(10, 10, 0xFFFFFF);
@@ -108,7 +113,7 @@ class EditorState extends State
 		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.pressed();
 		if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.pressed();
 	}
-	public function getTileId(mX:Float, mY:Float):Tile
+	public function getTileId(mX:Float, mY:Float,tilemap:EditorTilemap):Tile
 	{
 		if (mX < 0 || mX > tilemap.width - 20) return null;
 		return tilemap.getTileAt(Math.floor(mX / tilemap.tileSize) + Math.floor(mY / tilemap.tileSize) * Static.cX);
@@ -120,7 +125,7 @@ class EditorState extends State
 	}
 	public function tileDown()
 	{
-		var tile = getTileId(stageContainer.mouseX, stageContainer.mouseY);
+		var tile = getTileId(stageContainer.mouseX, stageContainer.mouseY,tilemap);
 		if (tile == null) return;
 		
 		switch(stagePressed)

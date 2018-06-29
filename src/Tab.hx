@@ -35,6 +35,7 @@ class Tab extends DisplayObjectContainer
 	}
 	public var shape:Shape;
 	public var container:DisplayObjectContainer;
+	public var containerPressed:Void->Void;
 	//buttons
 	public var dropdown:Shape;
 	public var add:Shape;
@@ -130,6 +131,7 @@ class Tab extends DisplayObjectContainer
 	public function pressed() 
 	{
 		if (App.pointRect(mouseX, mouseY, new Rectangle(dropdown.x, dropdown.y, dropdown.width, dropdown.height))) expandBool = !expandBool;
+		if(containerPressed != null) if (App.pointRect(mouseX, mouseY, new Rectangle(container.x, container.y, container.width, container.height))) containerPressed();
 	}
 	
 }
