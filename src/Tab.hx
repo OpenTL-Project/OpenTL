@@ -34,12 +34,14 @@ class Tab extends DisplayObjectContainer
 		return expandBool;
 	}
 	public var shape:Shape;
+	public var container:DisplayObjectContainer;
 	//buttons
 	public var dropdown:Shape;
 	public var add:Shape;
 	public var trash:Shape;
 	
 	public var shapeWidth:Int = 0;
+	
 	
 
 	public function new(title:String,expanded:Bool=true,scrollable:Bool=true,toggleView:Bool=false,addButtonBool:Bool=true,setShapeWidth:Int=256) 
@@ -62,6 +64,9 @@ class Tab extends DisplayObjectContainer
 		
 		//set
 		expandBool = expanded;
+		
+		//create container to add tilemap/scroll view in 
+		addChild(container = new DisplayObjectContainer());
 	}
 	
 	//dropdown functions

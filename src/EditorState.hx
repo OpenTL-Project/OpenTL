@@ -15,6 +15,7 @@ import openfl.display.Tilemap;
 import openfl.display.Tileset;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
+import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.ui.Keyboard;
 
@@ -82,9 +83,13 @@ class EditorState extends State
 		tiles.y = 80;
 		tiles.x = 1120;
 		tilesTilemap = new EditorTilemap(false);
-		tilesTilemap.y = 135;
-		tilesTilemap.x = 13;
-		tiles.addChild(tilesTilemap);
+		tiles.container.y = 135;
+		tiles.container.x = 13;
+		tiles.container.addChild(tilesTilemap);
+		tiles.container.addChild(tilesTilemap.grid);
+		tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
+		tiles.container.mask.x = tiles.container.x;
+		tiles.container.mask.y = tiles.container.y;
 		addChild(tiles);
 		#if debug
 		var fps = new FPS(10, 10, 0xFFFFFF);

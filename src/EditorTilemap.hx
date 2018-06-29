@@ -73,8 +73,8 @@ class EditorTilemap extends Tilemap
 		grid.graphics.clear();
 		grid.width = 0;
 		grid.height = 0;
-		grid.x = 0;
-		grid.y = 0;
+		grid.x = x;
+		grid.y = y;
 		//remove previous tiles
 		if (numTiles > 0) removeTiles(0, numTiles);
 		//grid line style
@@ -87,9 +87,22 @@ class EditorTilemap extends Tilemap
 		var i:Int = 0;
 		//y
 		var j:Int = 0;
+		var multiTiles:Bool = !mainBool;
 		while (j < Static.cY)
 		{
-			var tile = new EditorTile(1, i, j,tileset,tileSize);
+			//id system for tiles tilemap
+			var id = 0;
+			if (multiTiles)
+			{
+				id = i + j * Static.cX;
+				trace("id " + id + " num " + tileset.numRects);
+				if (id >= tileset.numRects)
+				{
+					multiTiles = false;
+					id = 0;
+				}
+			}
+			var tile = new EditorTile(id, i, j,tileset,tileSize);
 			addTile(tile);
 			createGrid(tile);
 			
