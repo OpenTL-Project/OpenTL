@@ -87,9 +87,9 @@ class EditorState extends State
 		tiles.container.x = 13;
 		tiles.container.addChild(tilesTilemap);
 		tiles.container.addChild(tilesTilemap.grid);
-		tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
+		/*tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
 		tiles.container.mask.x = tiles.container.x;
-		tiles.container.mask.y = tiles.container.y;
+		tiles.container.mask.y = tiles.container.y;*/
 		tiles.containerPressed = function()
 		{
 			//TODO: get tile id from mouse press

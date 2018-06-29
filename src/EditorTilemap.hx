@@ -20,6 +20,9 @@ class EditorTilemap extends Tilemap
 	public var handleArray:Array<HandleButton> = [];
 	public var mainBool:Bool = false;
 	public var tileSize:Float = 0;
+	public var selector:Shape;
+	public var amountX:Int = 0;
+	public var amountY:Int = 0;
 
 	public function new(setMainBool:Bool=true) 
 	{
@@ -40,13 +43,12 @@ class EditorTilemap extends Tilemap
 		//to do: write code to load tileset from a folder, currently hard coded renaine demo tileset (Thank you Squidly!)
 		bd = Assets.getBitmapData("assets/img/renaine_tiles.png");
 		
-		var tileSize:Int = 16;
-		var amountX:Int = Math.floor(bd.width / tileSize);
-		var amountY:Int = Math.floor(bd.height / tileSize);
+		amountX = Math.floor(bd.width / Static.tileSize);
+		amountY = Math.floor(bd.height / Static.tileSize);
 		
 		//fill rectangle array into tileset
 		var rectArray:Array<Rectangle> = [];
-		for (i in 0...amountX) for (j in 0...amountY) rectArray.push(new Rectangle(i * tileSize, j * tileSize, tileSize, tileSize));
+		for (j in 0...amountY) for (i in 0...amountX) rectArray.push(new Rectangle(i * Static.tileSize, j * Static.tileSize, Static.tileSize, Static.tileSize));
 		tileset = new Tileset(bd, rectArray);
 		grid = new Shape();
 		grid.cacheAsBitmap = true;
@@ -67,8 +69,13 @@ class EditorTilemap extends Tilemap
 	public function generate()
 	{
 		//set size
-		width = tileSize * Static.cX;
-		height = tileSize * Static.cY;
+		if (mainBool)
+		{
+			amountX = Static.cX;
+			amountY = Static.cY;
+		}
+		width = tileSize * amountX;
+		height = tileSize * amountY;
 		
 		grid.graphics.clear();
 		grid.width = 0;
@@ -88,13 +95,13 @@ class EditorTilemap extends Tilemap
 		//y
 		var j:Int = 0;
 		var multiTiles:Bool = !mainBool;
-		while (j < Static.cY)
+		while (j < amountY)
 		{
 			//id system for tiles tilemap
 			var id = 0;
 			if (multiTiles)
 			{
-				id = i + j * Static.cX;
+				id = i + j * amountX;
 				trace("id " + id + " num " + tileset.numRects);
 				if (id >= tileset.numRects)
 				{
@@ -107,7 +114,7 @@ class EditorTilemap extends Tilemap
 			createGrid(tile);
 			
 			i ++;
-			if (i >= Static.cX)
+			if (i >= amountX)
 			{
 				i = 0;
 				j += 1;
