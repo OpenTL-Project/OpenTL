@@ -4,6 +4,7 @@ import core.App;
 import haxe.Timer;
 import openfl.Assets;
 import openfl.display.BitmapData;
+import openfl.display.Tile;
 import openfl.display.Tilemap;
 import openfl.display.Tileset;
 import openfl.geom.Rectangle;
@@ -17,11 +18,21 @@ class EditorTilemap extends Tilemap
 {
 	public var grid:Shape;
 	public var handleArray:Array<HandleButton> = [];
+	public var mainBool:Bool = false;
+	public var localTileSize:Float = 0;
 
-	public function new() 
+	public function new(setMainBool:Bool=true) 
 	{
 		//intial size
 		super(1, 1, null, true);
+		mainBool = setMainBool;
+		if (mainBool)
+		{
+		localTileSize = Static.editorTileSize;	
+		}else{
+		localTileSize = Static.tilesTileSize;
+		}
+		trace("local " + localTileSize);
 		//bacgkround
 		//opaqueBackground = 0x0;
 		
@@ -42,6 +53,8 @@ class EditorTilemap extends Tilemap
 		EditorState.stageContainer.addChild(grid);
 		generate();
 		//add handles after 10 frames
+		if (mainBool)
+		{
 		var tim = new Timer(16 * 10);
 		tim.run = function()
 		{
@@ -49,13 +62,14 @@ class EditorTilemap extends Tilemap
 		tim.stop();
 		tim = null;
 		}
+		}
 	}
 	
 	public function generate()
 	{
 		//set size
-		width = Static.editorTileSize * Static.cX;
-		height = Static.editorTileSize * Static.cY;
+		width = localTileSize * Static.cX;
+		height = localTileSize * Static.cY;
 		
 		grid.graphics.clear();
 		grid.width = 0;
@@ -78,7 +92,7 @@ class EditorTilemap extends Tilemap
 		{
 			var tile = new EditorTile(1, i, j,tileset);
 			addTile(tile);
-			createGrid(i, j);
+			createGrid(tile);
 			
 			i ++;
 			if (i >= Static.cX)
@@ -90,13 +104,13 @@ class EditorTilemap extends Tilemap
 		
 	}
 	
-	public function createGrid(i:Int,j:Int)
+	public function createGrid(tile:Tile)
 	{
 		//TODO: turn into Dashed line total 7 dashes per tile
 		//create grid (bottom left -> bottom right -> top right)
-		grid.graphics.moveTo((i + 0) * Static.editorTileSize, (j + 1) * Static.editorTileSize);
-		grid.graphics.lineTo((i + 1) * Static.editorTileSize, (j + 1) * Static.editorTileSize);
-		grid.graphics.lineTo((i + 1) * Static.editorTileSize, (j + 0) * Static.editorTileSize);
+		grid.graphics.moveTo(tile.x, tile.y + tile.rect.height * tile.scaleY);
+		grid.graphics.lineTo(tile.x + tile.rect.width * tile.scaleX, tile.y + tile.rect.height * tile.scaleY);
+		grid.graphics.lineTo(tile.x + tile.rect.width * tile.scaleY, tile.y);
 	}
 	
 }

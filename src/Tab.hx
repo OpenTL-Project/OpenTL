@@ -39,11 +39,13 @@ class Tab extends DisplayObjectContainer
 	public var add:Shape;
 	public var trash:Shape;
 	
+	public var shapeWidth:Int = 0;
 	
 
-	public function new(title:String,expanded:Bool=true,scrollable:Bool=true,toggleView:Bool=false,addButtonBool:Bool=true) 
+	public function new(title:String,expanded:Bool=true,scrollable:Bool=true,toggleView:Bool=false,addButtonBool:Bool=true,setShapeWidth:Int=256) 
 	{
 		super();
+		shapeWidth = setShapeWidth;
 		//main shape
 		shape = new Shape();
 		addChild(shape);
@@ -52,8 +54,11 @@ class Tab extends DisplayObjectContainer
 		dropdown.x = 12; dropdown.y = 12;
 		addChild(dropdown);
 		
+		if (addButtonBool)
+		{
 		add = App.createSprite(232 - 4, 8 - 6, "assets/icons/add.svg");
 		addChild(add);
+		}
 		
 		//set
 		expandBool = expanded;
@@ -91,7 +96,7 @@ class Tab extends DisplayObjectContainer
 		shape.graphics.clear();
 		shape.graphics.lineStyle(2, 0x36373E);
 		shape.graphics.beginFill(0x5B5D6B);
-		shape.graphics.drawRoundRect(0, 0, 256, 640, 4 * 2, 4 * 2);
+		shape.graphics.drawRoundRect(0, 0, shapeWidth, 640, 4 * 2, 4 * 2);
 		shapeUnderLine();
 	}
 	public function collaspe()
@@ -100,15 +105,15 @@ class Tab extends DisplayObjectContainer
 		shape.graphics.clear();
 		shape.graphics.lineStyle(2, 0x36373E);
 		shape.graphics.beginFill(0x5B5D6B);
-		shape.graphics.drawRoundRect(0, 0, 256, 31, 4 * 2, 4 * 2);
+		shape.graphics.drawRoundRect(0, 0, shapeWidth, 31, 4 * 2, 4 * 2);
 		//shapeUnderLine();
 	}
 	public function shapeUnderLine()
 	{
 		//embed line into shape
 		shape.graphics.endFill();
-		shape.graphics.lineStyle(2, 0x36373E); shape.graphics.moveTo(16, 31); shape.graphics.lineTo(16 + 224, 31);
-		shape.graphics.lineStyle(2, 0x757788); shape.graphics.moveTo(16, 31 + 2); shape.graphics.lineTo(16 + 224, 31 + 2);
+		shape.graphics.lineStyle(2, 0x36373E); shape.graphics.moveTo(16, 31); shape.graphics.lineTo(16 + shapeWidth - 32, 31);
+		shape.graphics.lineStyle(2, 0x757788); shape.graphics.moveTo(16, 31 + 2); shape.graphics.lineTo(16 + shapeWidth - 32, 31 + 2);
 	}
 	
     public function Rect():Rectangle 

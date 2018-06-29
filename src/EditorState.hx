@@ -27,7 +27,6 @@ class EditorState extends State
 	public static var stageContainer:DisplayObjectContainer;
 	var stagePressed:Int = 0;
 	public static var tilemap:EditorTilemap;
-	var palette:Sprite;
 	
 	//buttons
 	var fileButton:Button;
@@ -41,6 +40,7 @@ class EditorState extends State
 	var layers:Tab;
 	var levels:Tab;
 	var tiles:Tab;
+	var tilesTilemap:EditorTilemap;
 	
 	//controls
 	var cameraUp:Bool = false;
@@ -60,8 +60,6 @@ class EditorState extends State
 	{
 		background = new Bitmap(new BitmapData(1, 1, false, 0x757788));
 		super();
-		//update static initally
-		Static.setEditorTileSize(true);
 		
 		stageContainer = new DisplayObjectContainer();
 		
@@ -69,10 +67,6 @@ class EditorState extends State
 		tilemap = new EditorTilemap();
 		stageContainer.addChild(tilemap);
 		stageContainer.addChild(tilemap.grid);
-		
-		//palette
-		palette = new Palette(tilemap.tileset.bitmapData);
-		addChild(palette);
 		//center intally
 		centerStage();
 		//ui
@@ -82,8 +76,16 @@ class EditorState extends State
 		addChild(topText);
 		//TODO: file project and export invisButtons using App.createInvisButton()
 		layers = new Tab("LAYERS");
-		layers.y = 100;
+		layers.y = 32 + 3;
 		addChild(layers);
+		tiles = new Tab("TILES", true, false, false, false, 320);
+		tiles.y = 80;
+		tiles.x = 1120;
+		tilesTilemap = new EditorTilemap(false);
+		tilesTilemap.y = 135;
+		tilesTilemap.x = 13;
+		tiles.addChild(tilesTilemap);
+		addChild(tiles);
 		#if debug
 		var fps = new FPS(10, 10, 0xFFFFFF);
 		fps.scaleX = 2; fps.scaleY = 2;
@@ -99,12 +101,12 @@ class EditorState extends State
 		stageUp();
 		if (App.pointRect(mouseX, mouseY, layers.Rect())) layers.pressed();
 		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.pressed();
-		//if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.pressed();
+		if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.pressed();
 	}
 	public function getTileId(mX:Float, mY:Float):Tile
 	{
 		if (mX < 0 || mX > tilemap.width - 20) return null;
-		return tilemap.getTileAt(Math.floor(mX / Static.editorTileSize) + Math.floor(mY / Static.editorTileSize) * Static.cX);
+		return tilemap.getTileAt(Math.floor(mX / tilemap.localTileSize) + Math.floor(mY / tilemap.localTileSize) * Static.cX);
 	}
 	//stage 
 	public function stageDown()
@@ -241,6 +243,7 @@ class EditorState extends State
 		super.resize(prx, pry, ssx, ssy);
 		App.setHeader(topBar);
 		App.setHeader(topText, false); topText.x += 16;
+		App.setHeader(layers, false); layers.x += 2;
 	}
 	
 	
