@@ -48,6 +48,12 @@ class EditorState extends State
 	var cameraDown:Bool = false;
 	var cameraLeft:Bool = false;
 	var cameraRight:Bool = false;
+	
+	var selectUp:Bool = false;
+	var selectDown:Bool = false;
+	var selectLeft:Bool = false;
+	var selectRight:Bool = false;
+	
 	var cameraSpeed:Int = 5;
 	var leftPressed:Bool = false;
 	var rightPressed:Bool = false;
@@ -87,13 +93,14 @@ class EditorState extends State
 		tiles.container.x = 13;
 		tiles.container.addChild(tilesTilemap);
 		tiles.container.addChild(tilesTilemap.grid);
+		tiles.container.addChild(tilesTilemap.selector);
 		/*tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
 		tiles.container.mask.x = tiles.container.x;
 		tiles.container.mask.y = tiles.container.y;*/
 		tiles.containerPressed = function()
 		{
 			//TODO: get tile id from mouse press
-			tilesTilemap.getTileAt(2).alpha = 0.2;
+			
 		}
 		addChild(tiles);
 		#if debug
@@ -134,10 +141,12 @@ class EditorState extends State
 			//nothing
 			case 1:
 			//left mouse
-			tile.alpha = 0.2;
+			tile.id = tilesTilemap.selectorID;
+			tile.alpha = 1;
 			case 2:
 			//right mouse
-			tile.alpha = 1;
+			tile.id = 0;
+			tile.alpha = 0;
 		}
 	}
 	public function stageRightDown()
@@ -174,17 +183,44 @@ class EditorState extends State
 	{
 		super.keyDown(e);
 		setKeyboard(e.keyCode, true);
+		selectMove();
 	}
 	
 	public function setKeyboard(keyCode:Int, bool:Bool)
 	{
 		switch(keyCode)
 		{
-			case Keyboard.UP | Keyboard.W: cameraUp = bool;
-			case Keyboard.DOWN | Keyboard.S: cameraDown = bool;
-			case Keyboard.LEFT | Keyboard.A: cameraLeft = bool;
-			case Keyboard.RIGHT | Keyboard.D: cameraRight = bool;
+			case Keyboard.UP: cameraUp = bool;
+			case Keyboard.DOWN: cameraDown = bool;
+			case Keyboard.LEFT: cameraLeft = bool;
+			case Keyboard.RIGHT: cameraRight = bool;
+			
+			case Keyboard.W: selectUp = bool;
+			case Keyboard.S: selectDown = bool;
+			case Keyboard.A: selectLeft = bool;
+			case Keyboard.D: selectRight = bool;
+			
 		}
+	}
+	
+	public function selectMove()
+	{
+		var tx:Float = 0;
+		var ty:Float = 0;
+		
+		if (selectUp && tilesTilemap.selectorID > tilesTilemap.amountX) tilesTilemap.selectorID += -tilesTilemap.amountX;
+		if (selectDown && tilesTilemap.selectorID < tilesTilemap.amountX * tilesTilemap.amountY - tilesTilemap.amountX) tilesTilemap.selectorID += tilesTilemap.amountX;
+		if (selectLeft && tilesTilemap.selectorID > 0)
+		{
+			if (tilesTilemap.selectorID - Math.floor(tilesTilemap.selectorID / tilesTilemap.amountX) * tilesTilemap.amountX > 0) tilesTilemap.selectorID += -1;
+		}
+		if (selectRight && tilesTilemap.selectorID + 1 < tilesTilemap.amountX * tilesTilemap.amountY)
+		{
+			if (tilesTilemap.selectorID - Math.floor(tilesTilemap.selectorID / tilesTilemap.amountX) * tilesTilemap.amountX < tilesTilemap.amountX - 1) tilesTilemap.selectorID += 1;
+		}
+		
+		tilesTilemap.selector.x = (tilesTilemap.selectorID - Math.floor(tilesTilemap.selectorID / tilesTilemap.amountX) * tilesTilemap.amountX) * tilesTilemap.tileSize;
+		tilesTilemap.selector.y = Math.floor(tilesTilemap.selectorID / tilesTilemap.amountX) * tilesTilemap.tileSize;
 	}
 	
 	override public function update() 

@@ -21,6 +21,7 @@ class EditorTilemap extends Tilemap
 	public var mainBool:Bool = false;
 	public var tileSize:Float = 0;
 	public var selector:Shape;
+	public var selectorID:Int = 0;
 	public var amountX:Int = 0;
 	public var amountY:Int = 0;
 
@@ -34,6 +35,9 @@ class EditorTilemap extends Tilemap
 		tileSize = Static.editorTileSize;	
 		}else{
 		tileSize = Static.tilesTileSize;
+		//selector
+		selector = new Shape();
+		selector.cacheAsBitmap = true;
 		}
 		trace("local " + tileSize);
 		//bacgkround
@@ -73,6 +77,11 @@ class EditorTilemap extends Tilemap
 		{
 			amountX = Static.cX;
 			amountY = Static.cY;
+		}else{
+			//selector
+			selector.graphics.clear();
+			selector.graphics.lineStyle(4, 0xFFFFFF);
+			selector.graphics.drawRect(0, 0, tileSize, tileSize);
 		}
 		width = tileSize * amountX;
 		height = tileSize * amountY;
@@ -109,7 +118,9 @@ class EditorTilemap extends Tilemap
 					id = 0;
 				}
 			}
-			var tile = new EditorTile(id, i, j,tileset,tileSize);
+			
+			var tile = new EditorTile(id, i, j, tileset, tileSize);
+			if (!multiTiles) tile.alpha = 0;
 			addTile(tile);
 			createGrid(tile);
 			
