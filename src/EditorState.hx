@@ -162,8 +162,8 @@ class EditorState extends State
 		
 		var data = Json.parse(string);
 		var array:Array<Int> = data.data;
-		if(data.amountX != null)tilemap.amountX = data.amountX;
-		if (data.amountY != null) tilemap.amountY = data.amountY;
+		if(data.amountX > 0)tilemap.amountX = data.amountX;
+		if (data.amountY > 0) tilemap.amountY = data.amountY;
 		if (data.tileSize > 0) tilemap.tileSize = data.tileSize;
 		tilemap.generate();
 		for (i in 0...array.length)
