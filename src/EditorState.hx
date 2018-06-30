@@ -19,7 +19,6 @@ import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
-import openfl.net.ObjectEncoding;
 import openfl.net.SharedObject;
 import openfl.ui.Keyboard;
 
@@ -169,12 +168,15 @@ class EditorState extends State
 		for (i in 0...array.length)
 		{
 			var tile = tilemap.getTileAt(i);
+			if (tile != null)
+			{
 			if (array[i] == -1)
 			{
 			tile.alpha = 0;	
 			}else{
 			tile.alpha = 1;
 			tile.id = array[i];
+			}
 			}
 		}
 	}
