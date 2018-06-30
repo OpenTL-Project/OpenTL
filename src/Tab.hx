@@ -104,6 +104,7 @@ class Tab extends DisplayObjectContainer
 		shape.graphics.beginFill(0x5B5D6B);
 		shape.graphics.drawRoundRect(0, 0, shapeWidth, 640, 4 * 2, 4 * 2);
 		shapeUnderLine();
+		if(container != null)container.visible = true;
 	}
 	public function collaspe()
 	{
@@ -113,6 +114,7 @@ class Tab extends DisplayObjectContainer
 		shape.graphics.beginFill(0x5B5D6B);
 		shape.graphics.drawRoundRect(0, 0, shapeWidth, 31, 4 * 2, 4 * 2);
 		//shapeUnderLine();
+		if(container != null)container.visible = false;
 	}
 	public function shapeUnderLine()
 	{

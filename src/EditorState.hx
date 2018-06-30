@@ -184,6 +184,13 @@ class EditorState extends State
 		super.keyDown(e);
 		setKeyboard(e.keyCode, true);
 		selectMove();
+		switch(e.keyCode)
+		{
+			case Keyboard.V:
+			var bool = !tilemap.grid.visible;
+			tilemap.grid.visible = bool;
+			for (handler in tilemap.handleArray) handler.visible = bool;
+		}
 	}
 	
 	public function setKeyboard(keyCode:Int, bool:Bool)
