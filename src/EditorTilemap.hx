@@ -39,7 +39,6 @@ class EditorTilemap extends Tilemap
 		selector = new Shape();
 		selector.cacheAsBitmap = true;
 		}
-		trace("local " + tileSize);
 		//bacgkround
 		//opaqueBackground = 0x0;
 		
@@ -111,7 +110,6 @@ class EditorTilemap extends Tilemap
 			if (multiTiles)
 			{
 				id = i + j * amountX;
-				trace("id " + id + " num " + tileset.numRects);
 				if (id >= tileset.numRects)
 				{
 					multiTiles = false;

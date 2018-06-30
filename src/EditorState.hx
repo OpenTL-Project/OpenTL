@@ -4,6 +4,8 @@ import core.App;
 import core.Button;
 import core.State;
 import core.Text;
+import haxe.Json;
+import haxe.Timer;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.DisplayObjectContainer;
@@ -17,6 +19,8 @@ import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
+import openfl.net.ObjectEncoding;
+import openfl.net.SharedObject;
 import openfl.ui.Keyboard;
 
 /**
@@ -62,11 +66,21 @@ class EditorState extends State
 	public static var oX:Float = 0;
 	public static var oY:Float = 0;
 	
+	public var save:SharedObject;
+	public var saveTimer:Timer;
+	
 
 	public function new()
 	{
 		background = new Bitmap(new BitmapData(1, 1, false, 0x757788));
 		super();
+		save = SharedObject.getLocal("save");
+		saveTimer = new Timer(1000 * 3);
+		saveTimer.run = function()
+		{
+			save.data.tilemap = saveTilemap();
+			trace("auto save");
+		}
 		
 		stageContainer = new DisplayObjectContainer();
 		
@@ -88,15 +102,16 @@ class EditorState extends State
 		tiles = new Tab("TILES", true, false, false, false, 320);
 		tiles.y = 80;
 		tiles.x = 1120;
+		
 		tilesTilemap = new EditorTilemap(false);
 		tiles.container.y = 135;
 		tiles.container.x = 13;
 		tiles.container.addChild(tilesTilemap);
 		tiles.container.addChild(tilesTilemap.grid);
 		tiles.container.addChild(tilesTilemap.selector);
-		/*tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
+		tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
 		tiles.container.mask.x = tiles.container.x;
-		tiles.container.mask.y = tiles.container.y;*/
+		tiles.container.mask.y = tiles.container.y;
 		tiles.containerPressed = function()
 		{
 			//TODO: get tile id from mouse press
@@ -108,7 +123,60 @@ class EditorState extends State
 		fps.scaleX = 2; fps.scaleY = 2;
 		addChild(fps);
 		#end
+		//load
+		loadTilemap(save.data.tilemap);
+	}
+	
+	public function saveTilemap():String
+	{
+		var array1D:Array<Int> = [];
+		for (i in 0...tilemap.numTiles)
+		{
+			var tile = tilemap.getTileAt(i);
+			if (tile.alpha > 0 && tile.id > 0)
+			{
+			array1D.push(tile.id);
+			}else{
+			array1D.push(-1);
+			}
+		}
+		/*var array2D:Array<Array<Int>> = [];
+		for (j in 0...tilemap.amountY)
+		{
+			for (i in 0...tilemap.amountX)
+			{
+				var tile = tilemap.getTileAt(j * tilemap.amountX + i);
+				if (tile.alpha > 0 && tile.id > 0)
+				{
+				array2D[j][i] = tile.id;
+				}else{
+				array2D[j][i] = -1;
+				}
+			}
+		}*/
+		return Json.stringify({data:array1D,x:tilemap.amountX,y:tilemap.amountY,tileSize:tilemap.tileSize});
+	}
+	public function loadTilemap(string:String)
+	{
+		if (string == "") return;
 		
+		var data = Json.parse(string);
+		var array:Array<Int> = data.data;
+		if(data.amountX != null)tilemap.amountX = data.amountX;
+		if (data.amountY != null) tilemap.amountY = data.amountY;
+		if (data.tileSize > 0) tilemap.tileSize = data.tileSize;
+		tilemap.generate();
+		for (i in 0...array.length)
+		{
+			var tile = tilemap.getTileAt(i);
+			if (array[i] == -1)
+			{
+			tile.alpha = 0;	
+			}else{
+			tile.alpha = 1;
+			tile.id = array[i];
+			}
+		}
 	}
 	
 	//global 
