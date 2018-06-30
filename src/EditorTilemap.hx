@@ -129,7 +129,7 @@ class EditorTilemap extends Tilemap
 				j += 1;
 			}
 		}
-		
+		trace("num " + numTiles);
 	}
 	
 	public function createGrid(tile:EditorTile)

@@ -154,7 +154,7 @@ class EditorState extends State
 				}
 			}
 		}*/
-		return Json.stringify({data:array1D,x:tilemap.amountX,y:tilemap.amountY,tileSize:tilemap.tileSize});
+		return Json.stringify({data:array1D,cX:Static.cX,cY:Static.cY,tileSize:tilemap.tileSize});
 	}
 	public function loadTilemap(string:String)
 	{
@@ -162,8 +162,8 @@ class EditorState extends State
 		
 		var data = Json.parse(string);
 		var array:Array<Int> = data.data;
-		if(data.amountX > 0)tilemap.amountX = data.amountX;
-		if (data.amountY > 0) tilemap.amountY = data.amountY;
+		if(data.cX > 0)Static.cX = data.cX;
+		if (data.cY > 0) Static.cY = data.cY;
 		if (data.tileSize > 0) tilemap.tileSize = data.tileSize;
 		tilemap.generate();
 		for (i in 0...array.length)
