@@ -77,7 +77,7 @@ class EditorState extends State
 		saveTimer = new Timer(1000 * 3);
 		saveTimer.run = function()
 		{
-			save.data.tilemap = saveTilemap();
+			//save.data.tilemap = saveTilemap();
 			trace("auto save");
 		}
 		
@@ -123,7 +123,7 @@ class EditorState extends State
 		addChild(fps);
 		#end
 		//load
-		loadTilemap(save.data.tilemap);
+		//loadTilemap(save.data.tilemap);
 	}
 	
 	public function saveTilemap():String
