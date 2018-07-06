@@ -18,31 +18,24 @@ class EditorTilemap extends Tilemap
 {
 	public var grid:Shape;
 	public var handleArray:Array<HandleButton> = [];
-	public var mainBool:Bool = false;
 	public var tileSize:Float = 0;
 	public var selector:Shape;
 	public var selectorID:Int = 0;
 	public var amountX:Int = 0;
 	public var amountY:Int = 0;
 
-	public function new(setMainBool:Bool=true) 
+	public function new() 
 	{
 		//intial size
 		super(1, 1, null, true);
-		mainBool = setMainBool;
-		if (mainBool)
-		{
 		tileSize = Static.editorTileSize;	
-		}else{
-		tileSize = Static.tilesTileSize;
 		//selector
 		selector = new Shape();
 		selector.cacheAsBitmap = true;
-		}
 		//bacgkround
 		//opaqueBackground = 0x0;
 		
-		var bd:BitmapData = new BitmapData(50, 50, false, 0x000000);
+		var bd = new BitmapData(50, 50, false, 0x000000);
 		//to do: write code to load tileset from a folder, currently hard coded renaine demo tileset (Thank you Squidly!)
 		bd = Assets.getBitmapData("assets/img/renaine_tiles.png");
 		
@@ -57,8 +50,6 @@ class EditorTilemap extends Tilemap
 		grid.cacheAsBitmap = true;
 		generate();
 		//add handles after 10 frames
-		if (mainBool)
-		{
 		var tim = new Timer(16 * 10);
 		tim.run = function()
 		{
@@ -66,22 +57,14 @@ class EditorTilemap extends Tilemap
 		tim.stop();
 		tim = null;
 		}
-		}
 	}
 	
 	public function generate()
 	{
 		//set size
-		if (mainBool)
-		{
-			amountX = Static.cX;
-			amountY = Static.cY;
-		}else{
-			//selector
-			selector.graphics.clear();
-			selector.graphics.lineStyle(4, 0xFFFFFF);
-			selector.graphics.drawRect(0, 0, tileSize, tileSize);
-		}
+		amountX = Static.cX;
+		amountY = Static.cY;
+		
 		width = tileSize * amountX;
 		height = tileSize * amountY;
 		
@@ -102,26 +85,9 @@ class EditorTilemap extends Tilemap
 		var i:Int = 0;
 		//y
 		var j:Int = 0;
-		var multiTiles:Bool = !mainBool;
 		while (j < amountY)
 		{
-			//id system for tiles tilemap
-			var id = 0;
-			if (multiTiles)
-			{
-				id = i + j * amountX;
-				if (id >= tileset.numRects)
-				{
-					multiTiles = false;
-					id = 0;
-				}
-			}
-			
-			var tile = new EditorTile(id, i, j, tileset, tileSize);
-			if (!multiTiles) tile.alpha = 0;
-			addTile(tile);
-			createGrid(tile);
-			
+			createGridRect(i * tileSize,j * tileSize);
 			i ++;
 			if (i >= amountX)
 			{
@@ -132,13 +98,13 @@ class EditorTilemap extends Tilemap
 		trace("num " + numTiles);
 	}
 	
-	public function createGrid(tile:EditorTile)
+	public function createGridRect(x:Float,y:Float)
 	{
 		//TODO: turn into Dashed line total 7 dashes per tile
 		//create grid (bottom left -> bottom right -> top right)
-		grid.graphics.moveTo(tile.x, tile.tileSize + tile.y);
-		grid.graphics.lineTo(tile.x + tile.tileSize, tile.y + tile.tileSize);
-		grid.graphics.lineTo(tile.x + tile.tileSize, tile.y);
+		grid.graphics.moveTo(x, tileSize + y);
+		grid.graphics.lineTo(x + tileSize, y + tileSize);
+		grid.graphics.lineTo(x + tileSize, y);
 	}
 	
 }

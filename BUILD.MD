@@ -24,6 +24,12 @@ haxelib git app "https://github.com/PXshadow/App"
 
 <br>
 
+**Tested Versions**
+* OpenFL 7-8
+* Lime 6.0 - 6.4
+
+<br>
+
 ### Platform setup ###
 * cpp
 ``` SH

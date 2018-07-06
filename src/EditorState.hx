@@ -44,7 +44,8 @@ class EditorState extends State
 	var layers:Tab;
 	var levels:Tab;
 	var tiles:Tab;
-	var tilesTilemap:EditorTilemap;
+	var tilesBitmap:TilesBitmap;
+	var tilesSelector:Shape;
 	
 	//controls
 	var cameraUp:Bool = false;
@@ -73,13 +74,6 @@ class EditorState extends State
 	{
 		background = new Bitmap(new BitmapData(1, 1, false, 0x757788));
 		super();
-		save = SharedObject.getLocal("save");
-		saveTimer = new Timer(1000 * 3);
-		saveTimer.run = function()
-		{
-			//save.data.tilemap = saveTilemap();
-			trace("auto save");
-		}
 		
 		stageContainer = new DisplayObjectContainer();
 		
@@ -102,83 +96,17 @@ class EditorState extends State
 		tiles.y = 80;
 		tiles.x = 1120;
 		
-		tilesTilemap = new EditorTilemap(false);
-		tiles.container.y = 135;
-		tiles.container.x = 13;
-		tiles.container.addChild(tilesTilemap);
-		tiles.container.addChild(tilesTilemap.grid);
-		tiles.container.addChild(tilesTilemap.selector);
-		tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
-		tiles.container.mask.x = tiles.container.x;
-		tiles.container.mask.y = tiles.container.y;
-		tiles.containerPressed = function()
-		{
-			//TODO: get tile id from mouse press
-			
-		}
+		tilesBitmap = new TilesBitmap();
+		//tiles.container.y = 135;
+		//tiles.container.x = 13;
+		//tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
+		tiles.addChild(tilesBitmap);
 		addChild(tiles);
 		#if debug
 		var fps = new FPS(10, 10, 0xFFFFFF);
 		fps.scaleX = 2; fps.scaleY = 2;
 		addChild(fps);
 		#end
-		//load
-		//loadTilemap(save.data.tilemap);
-	}
-	
-	public function saveTilemap():String
-	{
-		var array1D:Array<Int> = [];
-		for (i in 0...tilemap.numTiles)
-		{
-			var tile = tilemap.getTileAt(i);
-			if (tile.alpha > 0 && tile.id > 0)
-			{
-			array1D.push(tile.id);
-			}else{
-			array1D.push(-1);
-			}
-		}
-		/*var array2D:Array<Array<Int>> = [];
-		for (j in 0...tilemap.amountY)
-		{
-			for (i in 0...tilemap.amountX)
-			{
-				var tile = tilemap.getTileAt(j * tilemap.amountX + i);
-				if (tile.alpha > 0 && tile.id > 0)
-				{
-				array2D[j][i] = tile.id;
-				}else{
-				array2D[j][i] = -1;
-				}
-			}
-		}*/
-		return Json.stringify({data:array1D,cX:Static.cX,cY:Static.cY,tileSize:tilemap.tileSize});
-	}
-	public function loadTilemap(string:String)
-	{
-		if (string == "") return;
-		
-		var data = Json.parse(string);
-		var array:Array<Int> = data.data;
-		if(data.cX > 0)Static.cX = data.cX;
-		if (data.cY > 0) Static.cY = data.cY;
-		if (data.tileSize > 0) tilemap.tileSize = data.tileSize;
-		tilemap.generate();
-		for (i in 0...array.length)
-		{
-			var tile = tilemap.getTileAt(i);
-			if (tile != null)
-			{
-			if (array[i] == -1)
-			{
-			tile.alpha = 0;	
-			}else{
-			tile.alpha = 1;
-			tile.id = array[i];
-			}
-			}
-		}
 	}
 	
 	//global 
@@ -211,7 +139,7 @@ class EditorState extends State
 			//nothing
 			case 1:
 			//left mouse
-			tile.id = tilesTilemap.selectorID;
+			tile.id = tilesBitmap.selectorID;
 			tile.alpha = 1;
 			case 2:
 			//right mouse
@@ -285,19 +213,19 @@ class EditorState extends State
 		var tx:Float = 0;
 		var ty:Float = 0;
 		
-		if (selectUp && tilesTilemap.selectorID > tilesTilemap.amountX) tilesTilemap.selectorID += -tilesTilemap.amountX;
-		if (selectDown && tilesTilemap.selectorID < tilesTilemap.amountX * tilesTilemap.amountY - tilesTilemap.amountX) tilesTilemap.selectorID += tilesTilemap.amountX;
-		if (selectLeft && tilesTilemap.selectorID > 0)
+		if (selectUp && tilesBitmap.selectorID > tilesBitmap.amountX) tilesBitmap.selectorID += -tilesBitmap.amountX;
+		if (selectDown && tilesBitmap.selectorID < tilesBitmap.amountX * tilesBitmap.amountY - tilesBitmap.amountX) tilesBitmap.selectorID += tilesBitmap.amountX;
+		if (selectLeft && tilesBitmap.selectorID > 0)
 		{
-			if (tilesTilemap.selectorID - Math.floor(tilesTilemap.selectorID / tilesTilemap.amountX) * tilesTilemap.amountX > 0) tilesTilemap.selectorID += -1;
+			if (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX > 0) tilesBitmap.selectorID += -1;
 		}
-		if (selectRight && tilesTilemap.selectorID + 1 < tilesTilemap.amountX * tilesTilemap.amountY)
+		if (selectRight && tilesBitmap.selectorID + 1 < tilesBitmap.amountX * tilesBitmap.amountY)
 		{
-			if (tilesTilemap.selectorID - Math.floor(tilesTilemap.selectorID / tilesTilemap.amountX) * tilesTilemap.amountX < tilesTilemap.amountX - 1) tilesTilemap.selectorID += 1;
+			if (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX < tilesBitmap.amountX - 1) tilesBitmap.selectorID += 1;
 		}
 		
-		tilesTilemap.selector.x = (tilesTilemap.selectorID - Math.floor(tilesTilemap.selectorID / tilesTilemap.amountX) * tilesTilemap.amountX) * tilesTilemap.tileSize;
-		tilesTilemap.selector.y = Math.floor(tilesTilemap.selectorID / tilesTilemap.amountX) * tilesTilemap.tileSize;
+		tilesSelector.x = (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX) * tilesBitmap.tileSize;
+		tilesSelector.y = Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.tileSize;
 	}
 	
 	override public function update() 
