@@ -6,6 +6,7 @@ import core.State;
 import core.Text;
 import haxe.Json;
 import haxe.Timer;
+import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.DisplayObjectContainer;
@@ -45,7 +46,7 @@ class EditorState extends State
 	var levels:Tab;
 	var tiles:Tab;
 	var tilesBitmap:TilesBitmap;
-	var tilesSelector:Shape;
+	public static var tilesSelector:Shape;
 	
 	//controls
 	var cameraUp:Bool = false;
@@ -74,9 +75,12 @@ class EditorState extends State
 	{
 		background = new Bitmap(new BitmapData(1, 1, false, 0x757788));
 		super();
+		var localLayer:Layer = new Layer();
+		localLayer.bitmapData = Assets.getBitmapData("assets/img/renaine_tiles.png");
+		localLayer.editorTileSize = 50;
+		Static.layers.push(localLayer);
 		
 		stageContainer = new DisplayObjectContainer();
-		
 		addChild(stageContainer);
 		tilemap = new EditorTilemap();
 		stageContainer.addChild(tilemap);
@@ -95,13 +99,10 @@ class EditorState extends State
 		tiles = new Tab("TILES", true, false, false, false, 320);
 		tiles.y = 80;
 		tiles.x = 1120;
-		
 		tilesBitmap = new TilesBitmap();
-		//tiles.container.y = 135;
-		//tiles.container.x = 13;
-		//tiles.addChild(tiles.container.mask = App.createRect(0, 0, 290, 290, 0));
 		tiles.addChild(tilesBitmap);
 		addChild(tiles);
+		tiles.addChild(tilesSelector);
 		#if debug
 		var fps = new FPS(10, 10, 0xFFFFFF);
 		fps.scaleX = 2; fps.scaleY = 2;
@@ -121,7 +122,7 @@ class EditorState extends State
 	public function getTileId(mX:Float, mY:Float,tilemap:EditorTilemap):Tile
 	{
 		if (mX < 0 || mX > tilemap.width - 20) return null;
-		return tilemap.getTileAt(Math.floor(mX / tilemap.tileSize) + Math.floor(mY / tilemap.tileSize) * Static.cX);
+		return tilemap.getTileAt(Math.floor(mX / tilemap.layer.editorTileSize) + Math.floor(mY / tilemap.layer.editorTileSize) * Static.cX);
 	}
 	//stage 
 	public function stageDown()
@@ -224,8 +225,9 @@ class EditorState extends State
 			if (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX < tilesBitmap.amountX - 1) tilesBitmap.selectorID += 1;
 		}
 		
-		tilesSelector.x = (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX) * tilesBitmap.tileSize;
-		tilesSelector.y = Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.tileSize;
+		tilesSelector.x = tilesBitmap.x + (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX) * tilesBitmap.tileSize;
+		tilesSelector.y = tilesBitmap.y + Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.tileSize;
+		trace("selector " + tilesBitmap.selectorID);
 	}
 	
 	override public function update() 

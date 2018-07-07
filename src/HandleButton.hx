@@ -52,24 +52,17 @@ class HandleButton extends Button
 			case 0:
 			//up
 			graphic0(setWidth, lineThickness);
-			x = (EditorState.tilemap.width - width)/2;
-			y = -9 - height;
 			case 1:
 			//down
 			graphic0(setWidth, lineThickness);
-			x = (EditorState.tilemap.width - width) / 2;
-			y = EditorState.tilemap.height + 9;
 			case 2:
 			//left 
 			graphic1(setWidth, lineThickness);
-			x = -9 - height;
-			y = (EditorState.tilemap.height - height)/2;
 			case 3:
 			//right
 			graphic1(setWidth, lineThickness);
-			x = EditorState.tilemap.width + 9;
-			y = (EditorState.tilemap.height - height)/2;
 		}
+		refreshPos();
 		
 		//background invis rect
 		graphics.endFill();
@@ -85,20 +78,20 @@ class HandleButton extends Button
 			//N/A
 			case 0:
 			//up
-			x = (EditorState.tilemap.width - width)/2;
+			x = (EditorState.tilemap.grid.width - width)/2;
 			y = -9 - height;
 			case 1:
 			//down 
-			x = (EditorState.tilemap.width - width) / 2;
-			y = EditorState.tilemap.height + 9;
+			x = (EditorState.tilemap.grid.width - width) / 2;
+			y = EditorState.tilemap.grid.height + 9;
 			case 2:
 			//left 
 			x = -9 - height;
-			y = (EditorState.tilemap.height - height)/2;
+			y = (EditorState.tilemap.grid.height - height)/2;
 			case 3:
 			//right
-			x = EditorState.tilemap.width + 9;
-			y = (EditorState.tilemap.height - height)/2;
+			x = EditorState.tilemap.grid.width + 9;
+			y = (EditorState.tilemap.grid.height - height)/2;
 		}
 	}
 	
@@ -111,12 +104,12 @@ class HandleButton extends Button
 			var dif:Float = App.state.mouseY - EditorState.oY;
 			main.y += dif;
 			difMove += dif;
-			EditorState.tilemap.grid.y = Math.floor((EditorState.tilemap.y + difMove) / EditorState.tilemap.tileSize) * EditorState.tilemap.tileSize;
+			EditorState.tilemap.grid.y = Math.floor((EditorState.tilemap.y + difMove) / EditorState.tilemap.layer.editorTileSize) * EditorState.tilemap.layer.editorTileSize;
 			case 2 | 3:
 			var dif:Float = App.state.mouseX - EditorState.oX;
 			main.x += dif;
 			difMove += dif;
-			EditorState.tilemap.grid.x = Math.floor((EditorState.tilemap.x + difMove)/EditorState.tilemap.tileSize) * EditorState.tilemap.tileSize;
+			EditorState.tilemap.grid.x = Math.floor((EditorState.tilemap.x + difMove)/EditorState.tilemap.layer.editorTileSize) * EditorState.tilemap.layer.editorTileSize;
 		}
 	}
 	//check to see if resize happened
@@ -124,7 +117,7 @@ class HandleButton extends Button
 	{
 		if (main == null) return;
 		//change
-		var change:Int = Math.floor(difMove / EditorState.tilemap.tileSize);
+		var change:Int = Math.floor(difMove / EditorState.tilemap.layer.editorTileSize);
 		trace("change " + change);
 		if (Math.abs(change) > 0)
 		{
@@ -138,10 +131,10 @@ class HandleButton extends Button
 			{
 				case 0 | 1:
 				//y
-				Static.cY += change;
+				EditorState.tilemap.cY += change;
 				trace("changeY " + change);
 				case 2 | 3:
-				Static.cX += change;
+				EditorState.tilemap.cX += change;
 				trace("changeX " + change);
 				
 			}
