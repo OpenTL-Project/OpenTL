@@ -105,9 +105,9 @@ class EditorState extends State
 		tiles.y = 80;
 		tiles.x = 1120;
 		tilesBitmap = new TilesBitmap();
-		tiles.addChild(tilesBitmap);
 		addChild(tiles);
-		tiles.addChild(tilesSelector);
+		tiles.container.addChild(tilesBitmap);
+		tiles.container.addChild(tilesSelector);
 		#if debug
 		var fps = new FPS(10, 10, 0xFFFFFF);
 		fps.scaleX = 2; fps.scaleY = 2;
