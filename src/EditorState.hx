@@ -47,6 +47,8 @@ class EditorState extends State
 	var tiles:Tab;
 	var tilesBitmap:TilesBitmap;
 	public static var tilesSelector:Shape;
+	//map posistion tile
+	public var mapTile:Map<Int,EditorTile> = new Map<Int,EditorTile>();
 	
 	//controls
 	var cameraUp:Bool = false;
@@ -78,6 +80,9 @@ class EditorState extends State
 		var localLayer:Layer = new Layer();
 		localLayer.bitmapData = Assets.getBitmapData("assets/img/renaine_tiles.png");
 		localLayer.editorTileSize = 50;
+		localLayer.tileSize = 16;
+		localLayer.aX = 10;
+		localLayer.aY = 10;
 		Static.layers.push(localLayer);
 		
 		stageContainer = new DisplayObjectContainer();
@@ -119,11 +124,6 @@ class EditorState extends State
 		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.pressed();
 		if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.pressed();
 	}
-	public function getTileId(mX:Float, mY:Float,tilemap:EditorTilemap):Tile
-	{
-		if (mX < 0 || mX > tilemap.width - 20) return null;
-		return tilemap.getTileAt(Math.floor(mX / tilemap.layer.editorTileSize) + Math.floor(mY / tilemap.layer.editorTileSize) * Static.cX);
-	}
 	//stage 
 	public function stageDown()
 	{
@@ -131,21 +131,34 @@ class EditorState extends State
 	}
 	public function tileDown()
 	{
-		var tile = getTileId(stageContainer.mouseX, stageContainer.mouseY,tilemap);
-		if (tile == null) return;
-		
+		if (mouseX < stageContainer.x) return;
+		if (mouseX > stageContainer.x + tilemap.grid.width) return;
+		if (mouseY < stageContainer.y) return;
+		if (mouseY > stageContainer.y + tilemap.grid.height) return;
+		var int = Math.floor(stageContainer.mouseX/ tilemap.layer.editorTileSize) + Math.floor(stageContainer.mouseY / tilemap.layer.editorTileSize) * tilemap.cX;
+		trace("int " + int + " select " + tilesBitmap.selectorID + " num " + tilemap.numTiles);
+		var tile = mapTile.get(int);
+		if (tile == null)
+		{
+			tile = new EditorTile(tilesBitmap.selectorID,int);
+			tilemap.addTile(tile);
+			mapTile.set(int, tile);
+			//trace("x " + tile.x + " y " + tile.y + " num " + tilemap.numTiles);
+		}
 		switch(stagePressed)
 		{
 			case 0:
 			//nothing
 			case 1:
 			//left mouse
+			tilemap.removeTile(tile);
 			tile.id = tilesBitmap.selectorID;
-			tile.alpha = 1;
+			tilemap.addTile(tile);
 			case 2:
 			//right mouse
-			tile.id = 0;
-			tile.alpha = 0;
+			mapTile.remove(tile.int);
+			tilemap.removeTile(tile);
+			trace("remove");
 		}
 	}
 	public function stageRightDown()
@@ -227,7 +240,7 @@ class EditorState extends State
 		
 		tilesSelector.x = tilesBitmap.x + (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX) * tilesBitmap.tileSize;
 		tilesSelector.y = tilesBitmap.y + Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.tileSize;
-		trace("selector " + tilesBitmap.selectorID);
+		//trace("selector " + tilesBitmap.selectorID);
 	}
 	
 	override public function update() 

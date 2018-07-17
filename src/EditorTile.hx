@@ -11,19 +11,23 @@ class EditorTile extends openfl.display.Tile
 {
 	public var ix:Int = 0;
 	public var iy:Int = 0;
+	public var int:Int = 0;
 	public var tileSize:Float = 0;
 
-	public function new(id:Int=0, x:Int=0, y:Int=0,setTileset:Tileset,localSize:Float) 
+	public function new(id:Int=0, setInt:Int) 
 	{
-		tileSize = localSize;
-		ix = x;
-		iy = y;
+		tileSize = EditorState.tilemap.layer.editorTileSize;
+		int = setInt;
 		super(id, 0, 0, 1, 1);
 		//set tileset and rect
-		tileset = setTileset;
+		tileset = EditorState.tilemap.tileset;
 		rect = tileset.getRect(id);
 		//set properties to tile
 		data = null;
+		//set pos
+		var row:Int = Math.floor(int / EditorState.tilemap.cX);
+		ix = int - row * EditorState.tilemap.cX;
+		iy = row;
 		toGrid();
 		toScale();
 	}

@@ -28,7 +28,7 @@ class EditorTilemap extends Tilemap
 	public function new() 
 	{
 		//intial size
-		super(1, 1, null, true);
+		super(1,1, null, true);
 		//set inital layer
 		layer = Static.layers[0];
 		//selector
@@ -41,8 +41,8 @@ class EditorTilemap extends Tilemap
 		for (j in 0...cY) for (i in 0...cX) rectArray.push(new Rectangle(i * layer.tileSize, j * layer.tileSize, layer.tileSize, layer.tileSize));
 		tileset = new Tileset(layer.bitmapData, rectArray);
 		grid = new Shape();
-		grid.cacheAsBitmap = true;
 		generate();
+		grid.cacheAsBitmap = true;
 		//add handles after 10 frames
 		var tim = new Timer(16 * 10);
 		tim.run = function()
@@ -56,8 +56,8 @@ class EditorTilemap extends Tilemap
 	public function generate()
 	{
 		
-		width = layer.tileSize * cX;
-		height = layer.tileSize * cY;
+		width = layer.editorTileSize * cX;
+		height = layer.editorTileSize * cY;
 		
 		grid.graphics.clear();
 		grid.width = 0;
