@@ -60,6 +60,9 @@ class EditorState extends State
 	var selectDown:Bool = false;
 	var selectLeft:Bool = false;
 	var selectRight:Bool = false;
+
+	//mac specfic
+	var commandKey:Bool = false;
 	
 	var cameraSpeed:Int = 5;
 	var leftPressed:Bool = false;
@@ -127,15 +130,23 @@ class EditorState extends State
 	//stage 
 	public function stageDown()
 	{
-		if(HandleButton.main == null)stagePressed = 1;
+		if(HandleButton.main == null)
+		{
+		if(commandKey)
+		{
+		stagePressed = 2;
+		}else{
+		stagePressed = 1;
+		}
+		}
 	}
-	public function tileDown()
+	public function tileDown(mX:Float,mY:Float)
 	{
-		if (mouseX < stageContainer.x) return;
-		if (mouseX > stageContainer.x + tilemap.grid.width) return;
-		if (mouseY < stageContainer.y) return;
-		if (mouseY > stageContainer.y + tilemap.grid.height) return;
-		var int = Math.floor(stageContainer.mouseX/ tilemap.layer.editorTileSize) + Math.floor(stageContainer.mouseY / tilemap.layer.editorTileSize) * tilemap.cX;
+		if (mX < stageContainer.x + tilemap.x) return;
+		if (mX > stageContainer.x + tilemap.grid.width - 8) return;
+		if (mY < stageContainer.y + tilemap.y) return;
+		if (mY > stageContainer.y + tilemap.grid.height - 8) return;
+		var int = Math.floor((mX - stageContainer.x) / tilemap.layer.editorTileSize) + Math.floor((mY - stageContainer.y) / tilemap.layer.editorTileSize) * tilemap.cX;
 		trace("int " + int + " select " + tilesBitmap.selectorID + " num " + tilemap.numTiles);
 		var tile = mapTile.get(int);
 		if (tile == null)
@@ -143,7 +154,7 @@ class EditorState extends State
 			tile = new EditorTile(tilesBitmap.selectorID,int);
 			tilemap.addTile(tile);
 			mapTile.set(int, tile);
-			//trace("x " + tile.x + " y " + tile.y + " num " + tilemap.numTiles);
+			trace("x " + tile.x + " y " + tile.y + " num " + tilemap.numTiles);
 		}
 		switch(stagePressed)
 		{
@@ -170,21 +181,27 @@ class EditorState extends State
 		stagePressed = 0;
 		HandleButton.resize();
 	}
+
+	public function overState():Bool
+	{
+		if(App.pointRect(mouseX,mouseY,new Rectangle(stageContainer.x + tilemap.x,stageContainer.y + tilemap.y,tilemap.width,tilemap.height)))return true;
+		return false;
+	}
 	
 	override public function mouseDown() 
 	{
 		super.mouseDown();
-		if(App.pointRect(mouseX,mouseY,new Rectangle(stageContainer.x,stageContainer.y,stageContainer.width,stageContainer.height)))stageDown();
+		if(overState())stageDown();
 	}
 	override public function mouseRightDown(e:MouseEvent) 
 	{
 		super.mouseRightDown(e);
-		if (App.pointRect(mouseX, mouseY, new Rectangle(stageContainer.x, stageContainer.y, stageContainer.width, stageContainer.height))) stageRightDown();
+		if(overState()) stageRightDown();
 	}
 	override public function mouseRightUp(e:MouseEvent) 
 	{
 		super.mouseRightUp(e);
-		stageUp();
+		if(stagePressed == 2)stageUp();
 	}
 	override public function keyUp(e:KeyboardEvent) 
 	{
@@ -218,6 +235,9 @@ class EditorState extends State
 			case Keyboard.S: selectDown = bool;
 			case Keyboard.A: selectLeft = bool;
 			case Keyboard.D: selectRight = bool;
+
+			//mac specfic
+			case Keyboard.COMMAND: commandKey = bool;
 			
 		}
 	}
@@ -247,7 +267,18 @@ class EditorState extends State
 	{
 		super.update();
 		//drag
-		if (stagePressed > 0) tileDown();
+		if (stagePressed > 0)
+		{
+		//this code helps with fast drawing of tiles onto the tilemap
+		var mX:Float = mouseX;
+		var mY:Float = mouseY;
+		if(Math.abs(mouseX - oX) > tilemap.layer.editorTileSize)mX = oX + (mouseX - oX)/2;
+		if(Math.abs(mouseY - oY) > tilemap.layer.editorTileSize)mY = oY + (mouseY - oY)/2;
+		if(mX != mouseX || mY != mouseY)tileDown(mX,mY);
+		
+
+		tileDown(mouseX,mouseY);
+		}
 		//update tile resizing of stage
 		if (HandleButton.main !=  null) HandleButton.update();
 		//trace("keyUP " + cameraUp);
@@ -304,12 +335,12 @@ class EditorState extends State
 		mouseMiddleDown = false;
 	}
 	
-	override public function resize(prx:Int, pry:Int, ssx:Float, ssy:Float) 
+	override public function resize() 
 	{
-		super.resize(prx, pry, ssx, ssy);
-		App.setHeader(topBar);
-		App.setHeader(topText, false); topText.x += 16;
-		App.setHeader(layers, false); layers.x += 2;
+		super.resize();
+		setHeader(topBar);
+		setHeader(topText, false); topText.x += 16;
+		setHeader(layers, false); layers.x += 2;
 	}
 	
 	
