@@ -276,7 +276,6 @@ class EditorState extends State
 		if(Math.abs(mouseY - oY) > tilemap.layer.editorTileSize)mY = oY + (mouseY - oY)/2;
 		if(mX != mouseX || mY != mouseY)tileDown(mX,mY);
 		
-
 		tileDown(mouseX,mouseY);
 		}
 		//update tile resizing of stage

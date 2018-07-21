@@ -17,6 +17,8 @@ class HandleButton extends Button
 	public static var main:HandleButton;
 	public static var difMove:Float = 0;
 	public var direction:Int = 0;
+	public static var countOld:Int = 0;
+	public static var initalCount:Int = 0;
 	/**
 	 * 
 	 * @param	xpos
@@ -104,12 +106,24 @@ class HandleButton extends Button
 			var dif:Float = App.state.mouseY - EditorState.oY;
 			main.y += dif;
 			difMove += dif;
-			EditorState.tilemap.grid.y = Math.floor((EditorState.tilemap.y + difMove) / EditorState.tilemap.layer.editorTileSize) * EditorState.tilemap.layer.editorTileSize;
+			if(initalCount == 0)initalCount = EditorState.tilemap.cY;
+			EditorState.tilemap.cY = initalCount + Math.floor((EditorState.tilemap.y + difMove) / EditorState.tilemap.layer.editorTileSize);
+			if(EditorState.tilemap.cY != countOld)
+			{
+				EditorState.tilemap.generate();
+				countOld = EditorState.tilemap.cY;
+			}
 			case 2 | 3:
 			var dif:Float = App.state.mouseX - EditorState.oX;
 			main.x += dif;
 			difMove += dif;
-			EditorState.tilemap.grid.x = Math.floor((EditorState.tilemap.x + difMove)/EditorState.tilemap.layer.editorTileSize) * EditorState.tilemap.layer.editorTileSize;
+			if(initalCount == 0)initalCount = EditorState.tilemap.cX;
+			EditorState.tilemap.cX = initalCount + Math.floor((EditorState.tilemap.x + difMove)/EditorState.tilemap.layer.editorTileSize);
+			if(EditorState.tilemap.cX != countOld)
+			{
+				EditorState.tilemap.generate();
+				countOld = EditorState.tilemap.cX;
+			}
 		}
 	}
 	//check to see if resize happened
@@ -119,6 +133,7 @@ class HandleButton extends Button
 		//change
 		var change:Int = Math.floor(difMove / EditorState.tilemap.layer.editorTileSize);
 		trace("change " + change);
+		initalCount = 0;
 		if (Math.abs(change) > 0)
 		{
 			if (main.direction == 0 || main.direction == 2) 
@@ -127,7 +142,7 @@ class HandleButton extends Button
 			}
 			
 			//tile width/height change
-			switch(main.direction)
+			/*switch(main.direction)
 			{
 				case 0 | 1:
 				//y
@@ -137,8 +152,8 @@ class HandleButton extends Button
 				EditorState.tilemap.cX += change;
 				trace("changeX " + change);
 				
-			}
-			EditorState.tilemap.generate();
+			}*/
+			
 			
 		//refresh all handlers
 		for (handler in EditorState.tilemap.handleArray) handler.refreshPos();
