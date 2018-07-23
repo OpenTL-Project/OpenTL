@@ -4,6 +4,7 @@ import core.App;
 import openfl.display.Sprite;
 import openfl.Lib;
 import core.Font;
+import crashdumper.CrashDumper;
 
 /**
  * ...

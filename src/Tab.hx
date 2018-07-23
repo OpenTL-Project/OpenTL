@@ -36,16 +36,17 @@ class Tab extends DisplayObjectContainer
 	public var shape:Shape;
 	public var container:DisplayObjectContainer;
 	public var containerPressed:Void->Void;
+	public var dropdownPressed:Void->Void;
 	//buttons
 	public var dropdown:Shape;
-	public var add:Shape;
+	public var add:Button;
 	public var trash:Shape;
 	
 	public var shapeWidth:Int = 0;
 	
 	
 
-	public function new(title:String,expanded:Bool=true,scrollable:Bool=true,toggleView:Bool=false,addButtonBool:Bool=true,setShapeWidth:Int=256) 
+	public function new(title:String,expanded:Bool=true,scrollable:Bool=true,toggleView:Bool=false,setShapeWidth:Int=256) 
 	{
 		super();
 		shapeWidth = setShapeWidth;
@@ -57,11 +58,10 @@ class Tab extends DisplayObjectContainer
 		dropdown.x = 12; dropdown.y = 12;
 		addChild(dropdown);
 		
-		if (addButtonBool)
-		{
-		add = App.createSprite(232 - 4, 8 - 6, "assets/icons/add.svg");
+		add = App.createButton(shapeWidth, 8 - 6, "assets/icons/add.svg");
+		add.x += -add.width - 25;
+		add.drawRect(-50,-50,100,100);
 		addChild(add);
-		}
 		
 		//set
 		expandBool = expanded;

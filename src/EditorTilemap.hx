@@ -19,27 +19,32 @@ class EditorTilemap extends Tilemap
 	public var grid:Shape;
 	public var handleArray:Array<HandleButton> = [];
 	public var selector:Shape;
-	public var selectorID:Int = 0;
 	public var layer:Layer;
 	//size of tilemap
-	public var cX:Int = 10;
-	public var cY:Int = 10;
+	public var cX(default,set):Int = 10;
+	public var cY(default,set):Int = 10;
+
+	function set_cX(value:Int):Int
+	{
+		if(value < 0)return cX;
+		return cX = value;
+	}
+	function set_cY(value:Int):Int
+	{
+		if(value < 0)return cY;
+		return cY = value;
+	}
 
 	public function new() 
 	{
 		//intial size
 		super(1,1, null, true);
-		//set inital layer
-		layer = Static.layers[0];
 		//selector
 		selector = new Shape();
 		selector.cacheAsBitmap = true;
 		//bacgkround
 		//opaqueBackground = 0x0;
 		//fill rectangle array into tileset
-		var rectArray:Array<Rectangle> = [];
-		for (j in 0...cY) for (i in 0...cX) rectArray.push(new Rectangle(i * layer.tileSize, j * layer.tileSize, layer.tileSize, layer.tileSize));
-		tileset = new Tileset(layer.bitmapData, rectArray);
 		grid = new Shape();
 		generate();
 		grid.cacheAsBitmap = true;
@@ -52,12 +57,20 @@ class EditorTilemap extends Tilemap
 		tim = null;
 		}
 	}
+
+	public function setTileset()
+	{
+		var rectArray:Array<Rectangle> = [];
+		for (j in 0...cY) for (i in 0...cX) rectArray.push(new Rectangle(i * layer.tileSize, j * layer.tileSize, layer.tileSize, layer.tileSize));
+		tileset = new Tileset(layer.bitmapData, rectArray);
+	}
 	
 	public function generate()
 	{
-		
-		width = layer.editorTileSize * cX;
-		height = layer.editorTileSize * cY;
+		var editorTileSize:Float = 32;
+		if(layer != null)editorTileSize = layer.editorTileSize;
+		width = editorTileSize * cX;
+		height = editorTileSize * cY;
 		
 		grid.graphics.clear();
 		grid.width = 0;
@@ -75,7 +88,7 @@ class EditorTilemap extends Tilemap
 		var j:Int = 0;
 		while (j < cY)
 		{
-			createGridRect(i,j);
+			createGridRect(i,j,editorTileSize);
 			i ++;
 			if (i >= cX)
 			{
@@ -90,15 +103,15 @@ class EditorTilemap extends Tilemap
 		grid.graphics.moveTo(0, 0); grid.graphics.lineTo(grid.width, 0);
 	}
 	
-	public function createGridRect(x:Float,y:Float)
+	public function createGridRect(x:Float,y:Float,editorTileSize:Float)
 	{
-		x *= layer.editorTileSize;
-		y *= layer.editorTileSize;
+		x *= editorTileSize;
+		y *= editorTileSize;
 		//TODO: turn into Dashed line total 7 dashes per tile
 		//create grid (bottom left -> bottom right -> top right)
-		grid.graphics.moveTo(x, layer.editorTileSize + y);
-		grid.graphics.lineTo(x + layer.editorTileSize, y + layer.editorTileSize);
-		grid.graphics.lineTo(x + layer.editorTileSize, y);
+		grid.graphics.moveTo(x, editorTileSize + y);
+		grid.graphics.lineTo(x + editorTileSize, y + editorTileSize);
+		grid.graphics.lineTo(x + editorTileSize, y);
 	}
 	
 }

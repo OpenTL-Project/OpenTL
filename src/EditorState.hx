@@ -22,6 +22,8 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.net.SharedObject;
 import openfl.ui.Keyboard;
+import openfl.text.TextField;
+import core.InputText;
 
 /**
  * ...
@@ -31,6 +33,7 @@ class EditorState extends State
 {
 	public static var stageContainer:DisplayObjectContainer;
 	var stagePressed:Int = 0;
+	var tilesPressed:Int = 0;
 	public static var tilemap:EditorTilemap;
 	
 	//buttons
@@ -47,6 +50,10 @@ class EditorState extends State
 	var tiles:Tab;
 	var tilesBitmap:TilesBitmap;
 	public static var tilesSelector:Shape;
+	//inputs
+	public var tileSizeInput:InputText;
+	public var tileSize:Float = 0;
+	public var tileSizeEditor:InputText;
 	//map posistion tile
 	public var mapTile:Map<Int,EditorTile> = new Map<Int,EditorTile>();
 	
@@ -80,13 +87,6 @@ class EditorState extends State
 	{
 		background = new Bitmap(new BitmapData(1, 1, false, 0x757788));
 		super();
-		var localLayer:Layer = new Layer();
-		localLayer.bitmapData = Assets.getBitmapData("assets/img/renaine_tiles.png");
-		localLayer.editorTileSize = 50;
-		localLayer.tileSize = 16;
-		localLayer.aX = 10;
-		localLayer.aY = 10;
-		Static.layers.push(localLayer);
 		
 		stageContainer = new DisplayObjectContainer();
 		addChild(stageContainer);
@@ -104,11 +104,23 @@ class EditorState extends State
 		layers = new Tab("LAYERS");
 		layers.y = 32 + 3;
 		addChild(layers);
-		tiles = new Tab("TILES", true, false, false, false, 320);
+		tiles = new Tab("TILES", true, false, false, 320);
+		tiles.add.Click = addTileSheet;
+		tiles.containerPressed = tileSelect;
 		tiles.y = 80;
 		tiles.x = 1120;
 		tilesBitmap = new TilesBitmap();
 		addChild(tiles);
+		//input system
+		var tileSizeInput = new InputText(8,300,"tileSize",20,300,0xFFFFFF,0xFFFFFF);
+		tileSizeInput.textfield.restrict = "0-9";
+		tileSizeInput.textInput = function()
+		{
+			tileSize = Std.parseFloat(cast(tileSizeInput.text,String));
+			setTileSizeInput();
+		}
+		tileSizeInput.text = "32";
+		tiles.container.addChild(tileSizeInput);
 		tiles.container.addChild(tilesBitmap);
 		tiles.container.addChild(tilesSelector);
 		#if debug
@@ -117,7 +129,44 @@ class EditorState extends State
 		addChild(fps);
 		#end
 	}
+
+	public function setTileSizeInput()
+	{
+		var size = tileSize;
+		trace("tile size " + size);
+		if(size > 0 && tilemap.layer != null)
+		{
+			trace("set tile size");
+			tilemap.layer.tileSize = size;
+			tilemap.layer.aX = Math.floor(tilesBitmap.width/size);
+			tilemap.layer.aY = Math.floor(tilesBitmap.height/size);
+		}
+	}
 	
+	public function tileSelect()
+	{
+		//select
+		tilesBitmap.selectorID = getSelectorID();
+		trace("tile " + tilesBitmap.selectorID);
+		selectMove(false);
+		tilesPressed = 1;
+	}
+	public function addTileSheet(_)
+	{
+		DirectorySystem.finish = function(bmd)
+		{
+			tilesBitmap.bitmapData = bmd;
+			tilemap.layer = new Layer();
+			//sets ax ay and tilesize
+			setTileSizeInput();
+			//editor tile size
+			tilemap.layer.editorTileSize = 32;
+			tilesBitmap.amountX = tilemap.layer.aX;
+			tilesBitmap.amountY = tilemap.layer.aY;
+			tilesBitmap.change();
+		};
+		DirectorySystem.open();
+	}
 	//global 
 	override public function mouseUp() 
 	{
@@ -125,7 +174,6 @@ class EditorState extends State
 		stageUp();
 		if (App.pointRect(mouseX, mouseY, layers.Rect())) layers.pressed();
 		//if (App.pointRect(mouseY, mouseY, levels.Rect())) levels.pressed();
-		if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.pressed();
 	}
 	//stage 
 	public function stageDown()
@@ -153,7 +201,7 @@ class EditorState extends State
 		{
 			tile = new EditorTile(tilesBitmap.selectorID,int);
 			tilemap.addTile(tile);
-			mapTile.set(int, tile);
+			mapTile.set(tile.int, tile);
 			trace("x " + tile.x + " y " + tile.y + " num " + tilemap.numTiles);
 		}
 		switch(stagePressed)
@@ -179,7 +227,8 @@ class EditorState extends State
 	public function stageUp()
 	{
 		stagePressed = 0;
-		HandleButton.resize();
+		tilesPressed = 0;
+		if(tilemap.layer != null)HandleButton.resize();
 	}
 
 	public function overState():Bool
@@ -192,6 +241,7 @@ class EditorState extends State
 	{
 		super.mouseDown();
 		if(overState())stageDown();
+		if (App.pointRect(mouseX, mouseY, tiles.Rect())) tiles.pressed();
 	}
 	override public function mouseRightDown(e:MouseEvent) 
 	{
@@ -221,6 +271,15 @@ class EditorState extends State
 			for (handler in tilemap.handleArray) handler.visible = bool;
 		}
 	}
+
+	public function getSelectorID():Int
+	{
+		if(tilemap.layer == null)return 0;
+		trace("selector layer " + tilemap.layer.tileSize);
+		tilesBitmap.selectorX = Math.floor(tilesBitmap.mouseX/tilemap.layer.tileSize);
+		tilesBitmap.selectorY = Math.floor(tilesBitmap.mouseY/tilemap.layer.tileSize);
+		return tilesBitmap.selectorX + tilesBitmap.selectorY * tilesBitmap.amountX;
+	}
 	
 	public function setKeyboard(keyCode:Int, bool:Bool)
 	{
@@ -242,11 +301,15 @@ class EditorState extends State
 		}
 	}
 	
-	public function selectMove()
+	public function selectMove(keyMove:Bool=true)
 	{
+		if(tilemap.layer == null)return;
+		trace("work");
 		var tx:Float = 0;
 		var ty:Float = 0;
 		
+		if(keyMove)
+		{
 		if (selectUp && tilesBitmap.selectorID > tilesBitmap.amountX) tilesBitmap.selectorID += -tilesBitmap.amountX;
 		if (selectDown && tilesBitmap.selectorID < tilesBitmap.amountX * tilesBitmap.amountY - tilesBitmap.amountX) tilesBitmap.selectorID += tilesBitmap.amountX;
 		if (selectLeft && tilesBitmap.selectorID > 0)
@@ -257,9 +320,10 @@ class EditorState extends State
 		{
 			if (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX < tilesBitmap.amountX - 1) tilesBitmap.selectorID += 1;
 		}
+		}
 		
-		tilesSelector.x = tilesBitmap.x + (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX) * tilesBitmap.tileSize;
-		tilesSelector.y = tilesBitmap.y + Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.tileSize;
+		tilesSelector.x = tilesBitmap.x + (tilesBitmap.selectorID - Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilesBitmap.amountX) * tilemap.layer.tileSize;
+		tilesSelector.y = tilesBitmap.y + Math.floor(tilesBitmap.selectorID / tilesBitmap.amountX) * tilemap.layer.tileSize;
 		//trace("selector " + tilesBitmap.selectorID);
 	}
 	
@@ -267,7 +331,7 @@ class EditorState extends State
 	{
 		super.update();
 		//drag
-		if (stagePressed > 0)
+		if (stagePressed > 0 && tilemap.layer != null)
 		{
 		//this code helps with fast drawing of tiles onto the tilemap
 		var mX:Float = mouseX;
@@ -275,11 +339,15 @@ class EditorState extends State
 		if(Math.abs(mouseX - oX) > tilemap.layer.editorTileSize)mX = oX + (mouseX - oX)/2;
 		if(Math.abs(mouseY - oY) > tilemap.layer.editorTileSize)mY = oY + (mouseY - oY)/2;
 		if(mX != mouseX || mY != mouseY)tileDown(mX,mY);
-		
 		tileDown(mouseX,mouseY);
 		}
+		if(tilesPressed > 0)
+		{
+			//resize tile selector
+			
+		}
 		//update tile resizing of stage
-		if (HandleButton.main !=  null) HandleButton.update();
+		if (HandleButton.main !=  null && tilemap.layer != null) HandleButton.update();
 		//trace("keyUP " + cameraUp);
 		cameraMove();
 		//drag stage

@@ -18,11 +18,14 @@
 	<haxelib name="actuate" />
 	<haxelib name="svg"/>
 	<haxelib name="app"/>
+	<haxelib name="crashdumper"/>
 	
 	<!-- assets -->
 	<icon path="assets/openfl.svg" />
 	<assets path="assets"/>
 	
+	<haxedef name="HXCPP_STACK_LINE" />  <!--if you want line numbers-->
+	<haxedef name="HXCPP_STACK_TRACE"/>  <!--if you want stack traces-->
 	<!-- optimize output
 	<haxeflag name="-dce full" /> -->
 	
